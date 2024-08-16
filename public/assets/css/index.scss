@@ -1,5 +1,5 @@
 @import url("./icons.css");
-@import "../../../../../assets/css/mixin.scss";
+@import "./mixin.scss";
 
 @mixin dataStateFade() {
     &[data-state="closed"] {
