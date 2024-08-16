@@ -1,0 +1,26 @@
+{
+    "name": "Personal WebSite for sharing experience",
+    "short_name": "Love to share",
+    "description": "Just learning new stuff about web programing and looking to share my experience with like minded people.",
+    "lang": "en-GB",
+    "start_url": "./index.html",
+    "icons": [
+        {
+            "src": "./assets/img/android-chrome-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "./assets/img/android-chrome-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
+        }
+    ],
+    "theme_color": "#663399",
+    "background_color": "#0a1428",
+    "display": "standalone",
+    "orientation": "portrait",
+    "prefer_related_applications": false
+}

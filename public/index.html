@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" media="screen" href="assets/css/index.css">
+    <meta name="description"
+        content="Experience seamless communication with our innovative chat app, available as a Progressive Web App (PWA) and on the web. Stay connected effortlessly with friends and colleagues, enjoying real-time messaging, voice and video calls. Our user-friendly interface and cross-platform compatibility ensure a smooth chatting experience anytime, anywhere. Elevate your conversations with rich multimedia sharing and customizable features. Embrace the future of communication with our versatile PWA and web-based chat application - where connectivity meets convenience!">
+    <link rel="icon" type="image/x-icon" href="./assets/img/favicon-16x16.png">
+    <link rel="icon" type="image/x-icon" href="./assets/img/favicon-32x32.png">
+    <meta name="robots" content="index, follow">
+    <!-- <link rel="canonical" href=""> -->
+    <!-- <meta name="author" content="Your Name"> -->
+    <!-- <meta name="keywords" content="keyword1, keyword2, keyword3"> -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="">
+    <meta property="og:description" content="">
+    <meta property="og:image" content="">
+    <meta property="og:locale" content="">
+    <meta property="og:url" content="">
+    <meta name="twitter:title" content="">
+    <meta name="twitter:description" content="">
+    <meta name="twitter:image" content="">
+    <meta name="twitter:card" content="">
+    <meta name="twitter:url" content="">
+
+    <!-- <script type="text/javascript" src="./sw.js"></script>
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#663399" />
+
+    <link rel="apple-touch-icon" sizes="180x180" href="./assets/img/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="./assets/img/android-chrome-192x192.png">
+    <link rel="mask-icon" href="./assets/img/safari-pinned-tab.svg" color="#663399">
+    <meta name="msapplication-TileColor" content="#00aba9"> -->
+
+    <title>Chat App</title>
+</head>
+
+<body>
+
+    <main class="main_container">
+
+        <!-- <div class="emojis">
+            <ul class="emojiss"></ul>
+        </div> -->
+
+        <div class="chatapp GRBg2FHmd9">
+
+            <div class="user_container">
+
+                <div class="user_container_wrapper" data-state="closed">
+
+                    <div class="user_container_wrapper_header">
+                        <h1 class="app_name">
+                            <a href="" hreflang="" aria-label="App name">example.com</a>
+                        </h1>
+
+                        <div class="buttons_flex">
+
+                            <button type="button" class="btn_icon" data-btn="search_in_conversation_container"
+                                aria-label="" aria-controls="">
+                                <i class="icon_magnifying-glass-solid"></i>
+                            </button>
+
+                            <button type="button" class="btn_icon" data-modal_btn="conversation_settings_modal"
+                                aria-label="" aria-controls="">
+                                <i class="icon_pen-to-square-solid"></i>
+                            </button>
+
+                        </div>
+
+                        <div class="search_container" data-search="search_in_conversation_container"
+                            data-state="closed">
+
+                            <button type="button" class="btn_icon" data-btn="search_in_conversation_container"
+                                aria-label="" aria-controls="">
+                                <i class="icon_xmark-solid"></i>
+                            </button>
+
+                            <input type="search" placeholder="Search" name="search_in_conversation">
+
+                            <div class="dropdown">
+
+                                <button type="button" class="btn_icon icon_dropdown" aria-label="" aria-controls="">
+                                    <i class="icon_filter-solid"></i>
+                                </button>
+
+                                <ul class="icon_dropdown_menu" data-state="closed">
+
+                                    <li class="icon_dropdown_menu_item">
+                                        <button type="button" class="btn_btn">
+                                            Attach File
+                                        </button>
+                                    </li>
+
+                                    <li class="icon_dropdown_menu_item">
+                                        <label type="button" class="label_btn">
+                                            Attach Photo
+                                            <input type="file" data-upload="images" accept="image/*" multiple="">
+                                        </label>
+                                    </li>
+
+                                </ul>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="user_container_wrapper_body">
+
+                        <ul class="conversation_list tab_content" data-tabContent="conversation_list"
+                            data-conversation="list" data-state="open"> </ul>
+
+                        <ul class="calls_list tab_content" data-tabContent="calls_list" data-state="closed"></ul>
+
+                    </div>
+
+                    <nav class="user_container_wrapper_footer">
+                        <ul class="profile_nav_list">
+                            <li class="profile_nav_list_item">
+                                <button type="button" class="btn_icon" data-tabBtn="conversation_list" aria-label=""
+                                    aria-controls="">
+                                    <i class="icon_message-solid"></i>
+                                </button>
+                            </li>
+
+                            <li class="profile_nav_list_item">
+                                <button type="button" class="btn_icon" aria-label="" aria-controls="">
+                                    <i class="icon_heart-regular"></i>
+                                </button>
+                            </li>
+
+                            <li class="profile_nav_list_item">
+                                <button type="button" class="btn_icon btn_primary"
+                                    data-modal_btn="conversation_create_modal" aria-label="" aria-controls="">
+                                    <i class="icon_plus-solid"></i>
+                                </button>
+                            </li>
+
+                            <li class="profile_nav_list_item">
+                                <button type="button" class="btn_icon" data-tabBtn="calls_list" aria-label=""
+                                    aria-controls="">
+                                    <i class="icon_phone-solid"></i>
+                                </button>
+                            </li>
+
+                            <li class="profile_nav_list_item">
+                                <button type="button" class="btn_icon profile_avatar_container"
+                                    data-modal_btn="profile_settings_modal" aria-label="" aria-controls="">
+                                </button>
+                            </li>
+
+                        </ul>
+                    </nav>
+
+                </div>
+
+                <div class="user_container_modal" data-modal_container="conversation_create_modal" data-state="closed">
+
+                    <div class="container">
+
+                        <div class="container_main" data-menu_container="conversation_request_menu" data-state="open">
+
+                            <div class="user_container_modal_header">
+                                <button type="button" class="btn_icon" data-modal_btn="conversation_create_modal"
+                                    aria-label="" aria-controls="">
+                                    <i class="icon_xmark-solid"></i>
+                                </button>
+
+                                <h2>Conversation request</h2>
+                            </div>
+
+                            <div class="user_container_modal_body">
+
+                                <ul class="navigation_list">
+
+                                    <li class="navigation_list_item">
+                                        <button type="button" class="btn_btn"
+                                            data-modal_menu_btn="conversation_create_group_step_1">
+                                            New Group
+                                            <!-- <small>Join the group chat</small> -->
+                                        </button>
+                                    </li>
+                                    <li class="navigation_list_item">
+                                        <button type="button" class="btn_btn"
+                                            data-modal_menu_btn="conversation_create_private">
+                                            New One to One
+                                            <!-- <small>Join the one to one chat</small> -->
+                                        </button>
+                                    </li>
+
+                                    <li class="navigation_list_item">
+                                        <button type="button" class="btn_btn"
+                                            data-modal_menu_btn="conversation_create_community">
+                                            New Community
+                                            <!-- <small>Join the community around you</small> -->
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+
+                        </div>
+
+                        <div class="container_sub" data-menu_container="conversation_create_group_step_1"
+                            data-state="closed">
+
+                            <div class="user_container_modal_header">
+                                <button type="button" class="btn_icon" data-modal_menu_btn="conversation_request_menu"
+                                    aria-label="" aria-controls="">
+                                    <i class="icon_chevron-left-solid"></i>
+                                </button>
+
+                                <h2>Add Members</h2>
+                            </div>
+
+                            <div class="user_search_body">
+                                <input type="search" placeholder="Search for profile"
+                                    name="search_group_conversation_to_create">
+                            </div>
+
+                            <div class="user_container_modal_body">
+
+                                <ul class="user_container_modal_body_list"
+                                    data-group-conversation="search_group_conversation_to_create_results">
+                                </ul>
+
+                                <ul class="group_request_conversation_list"> </ul>
+                            </div>
+
+                            <div class="user_container_modal_footer">
+
+                                <button type="button" class="btn_icon"
+                                    data-modal_menu_btn="conversation_create_group_step_2" aria-label=""
+                                    aria-controls="">
+                                    <i class="icon_chevron-right-solid"></i>
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                        <div class="container_sub" data-menu_container="conversation_create_group_step_2"
+                            data-state="closed">
+
+                            <div class="user_container_modal_header">
+                                <button type="button" class="btn_icon"
+                                    data-modal_menu_btn="conversation_create_group_step_1" aria-label=""
+                                    aria-controls="">
+                                    <i class="icon_chevron-left-solid"></i>
+                                </button>
+
+                                <h2>Create Group</h2>
+                            </div>
+
+                            <div class="user_container_modal_body">
+
+                                <form method="post" action="#" class="inputs_container"
+                                    id="createGroupConversationForm">
+
+                                    <div class="input_wrapper">
+                                        <label for="group_name">Group Name</label>
+                                        <div class="modal_body_input">
+                                            <input type="text" id="group_name" value="Just IT" aria-label=""
+                                                name="group_name" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="input_wrapper">
+                                        <label for="group_description">Group description</label>
+                                        <div class="modal_body_input">
+                                            <textarea type="password" id="group_description" aria-label=""
+                                                name="group_description">
+                                        </textarea>
+                                        </div>
+                                    </div>
+
+                                    <div class="modal_body_button">
+                                        <button type="submit" class="btn_primary" aria-label="Login form submit"
+                                            aria-controls="uLogin">
+                                            <span class="btn_txt">Create</span>
+                                        </button>
+                                    </div>
+                                </form>
+
+                            </div>
+
+                        </div>
+
+                        <div class="container_sub" data-menu_container="conversation_create_private"
+                            data-state="closed">
+
+                            <div class="user_container_modal_header">
+                                <button type="button" class="btn_icon" data-modal_menu_btn="conversation_request_menu"
+                                    aria-label="" aria-controls="">
+                                    <i class="icon_chevron-left-solid"></i>
+                                </button>
+
+                                <h2>Create One to One</h2>
+                            </div>
+
+                            <div class="user_search_body">
+                                <input type="search" placeholder="Request conversation"
+                                    name="searchProfileToRequestPrivateConversation">
+                            </div>
+
+                            <div class="user_container_modal_body">
+
+                                <ul class="user_container_modal_body_list" data-conversation="request_search_results">
+                                </ul>
+
+                            </div>
+
+                        </div>
+
+                        <div class="container_sub" data-menu_container="conversation_create_community"
+                            data-state="closed">
+
+                            <div class="user_container_modal_header">
+                                <button type="button" class="btn_icon" data-modal_menu_btn="conversation_request_menu"
+                                    aria-label="" aria-controls="">
+                                    <i class="icon_chevron-left-solid"></i>
+                                </button>
+
+                                <h2>Create Community</h2>
+                            </div>
+
+                            <div class="user_search_body">
+                                <input type="search" placeholder="Request conversation" name="twwwweeew">
+                            </div>
+
+                            <div class="user_container_modal_body">
+
+
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="user_container_modal" data-modal_container="conversation_settings_modal"
+                    data-state="closed">
+
+                    <div class="container">
+
+                        <div class="container_main" data-menu_container="conversation_settings_menu" data-state="open">
+
+                            <div class="user_container_modal_header">
+                                <button type="button" class="btn_icon" data-modal_btn="conversation_settings_modal"
+                                    aria-label="" aria-controls="">
+                                    <i class="icon_xmark-solid"></i>
+                                </button>
+
+                                <h2>Conversation settings</h2>
+                            </div>
+
+                            <div class="user_container_modal_body">
+
+                                <ul class="navigation_list">
+                                    <li class="navigation_list_item">
+                                        <button type="button" class="btn_btn"
+                                            data-modal_menu_btn="conversation_pending">
+                                            Pending
+                                        </button>
+                                    </li>
+                                    <li class="navigation_list_item">
+                                        <button type="button" class="btn_btn"
+                                            data-modal_menu_btn="conversation_create_private">
+                                            Accepted
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+
+                        </div>
+
+                        <div class="container_sub" data-menu_container="conversation_pending" data-state="closed">
+
+                            <div class="user_container_modal_header">
+                                <button type="button" class="btn_icon" data-modal_menu_btn="conversation_settings_menu"
+                                    aria-label="" aria-controls="">
+                                    <i class="icon_chevron-left-solid"></i>
+                                </button>
+
+                                <h2>Pending</h2>
+                            </div>
+
+                            <div class="user_container_modal_body">
+
+                                <ul class="user_container_modal_body_list" data-conversation="pending_list"> </ul>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="user_container_modal" data-modal_container="profile_settings_modal" data-state="closed">
+
+                    <div class="user_container_modal_header">
+                        <button type="button" class="btn_icon" data-modal_btn="profile_settings_modal" aria-label=""
+                            aria-controls="">
+                            <i class="icon_xmark-solid"></i>
+                        </button>
+
+                        <h2>Profile settings</h2>
+                    </div>
+
+                    <div class="user_container_modal_body">
+
+                        <div class="profile_settings_container">
+
+                            <div class="profile_settings_header">
+                                <div class="profile_container">
+                                    <div class="profile_avatar_container">
+                                        <!-- <img src="../uploads/userAvatars/user.svg"> -->
+                                        <span class="profile_status"></span>
+                                    </div>
+                                </div>
+                                <div class="profile_name">
+                                    Seid Ali
+                                </div>
+                            </div>
+
+                            <div class="profile_settings_body">
+                                <ul class="navigation_list">
+
+                                    <li class="navigation_list_item">
+                                        <button type="button" class="btn_btn" aria-label="">Account</button>
+                                    </li>
+
+                                    <li class="navigation_list_item">
+                                        <button type="button" class="btn_btn" aria-label="">Appearance</button>
+                                    </li>
+
+                                    <li class="navigation_list_item">
+                                        <button type="button" class="btn_btn" aria-label="">Privacy</button>
+                                    </li>
+
+                                    <li class="navigation_list_item">
+                                        <button type="button" class="btn_btn" aria-label="">Notifications</button>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div class="profile_settings_footer"></div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="chats_container" data-state="closed">
+
+                <!-- <section class="chat_container active" data-chat_id="cBcL4cvzYhHM">
+
+                    <section class="chat_wrapper">
+
+                        <header class="chat_header">
+
+                            <div class="flex_item">
+                                <button type="button" data-btn="close_modal" class="btn_icon header_close"
+                                    aria-label="Close chat window">
+                                    <i class="icon_xmark-solid"> </i>
+                                </button>
+                                <div class="profile_image">
+                                    <img src="../uploads/userAvatars/user.svg" alt="User avatar"
+                                        aria-label="User avatar">
+                                    <span class="profile_status"></span>
+                                </div>
+                                <div class="details">
+                                    <b class="profile_name">aqw12345</b>
+                                    <small>online</small>
+                                </div>
+                            </div>
+
+                            <div class="flex_item">
+                                <button type="button" class="btn_icon" data-btn="voiceCall"
+                                    aria-label="Voice call on/off">
+                                    <i class="icon_phone-solid"></i>
+                                </button>
+                                <button type="button" class="btn_icon" data-btn="videoCall"
+                                    aria-label="Video call on/off">
+                                    <i class="icon_video-solid"></i>
+                                </button>
+                                <button type="button" class="btn_icon" data-btn="side_bar_toggle"
+                                    aria-label="Chat sidebar toggle">
+                                    <i class="icon_bars-solid"></i>
+                                </button>
+                            </div>
+                        </header>
+
+                        <ul class="chat_messages">
+                            <div class="sticky_header"><span>Yesterday</span></div>
+
+                            <li class="day_divider"><span>Today</span></li>
+
+                            <li class="sender" data-message_status="delivered"
+                                data-message_id="cwbzmueb86w4wf2qfghvsjgwyovfz3m1">
+                                <div class="message_content">
+                                    <div class="message_body">
+                                        <p class="message_text">
+                                            Lorem <a href="" target="_blank" hreflang="">aqw123</a> dolor sit amet
+                                            consectetur adipisicing elit. Ratione repellat voluptatem necessitatibus
+                                            repellendus illum expedita aliquid assumenda dolorem iure, molestias
+                                            dolor
+                                            adipisci quibusdam accusantium modi facilis voluptates dolore
+                                            repudiandae
+                                            <span class="profile_tag">@aqw123</span> inventore?
+                                        </p>
+                                    </div>
+                                    <div class="message_footer">
+                                        <time datetime="">6:07 AM</time>
+                                        <span class="status">
+                                            <i class="icon_check-solid"></i><i class="icon_check-solid"></i>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="message_contextmenu">
+                                    <ul class="message_contextmenu_list" data-position="right">
+                                        <li class="message_contextmenu_list_item">
+                                            <button type="button" class="btn_btn" aria-label="">Reply</button>
+                                        </li>
+                                        <li class="message_contextmenu_list_item">
+                                            <button type="button" class="btn_btn" aria-label="">Forward</button>
+                                        </li>
+                                        <li class="message_contextmenu_list_item">
+                                            <button type="button" class="btn_btn" aria-label="">Copy</button>
+                                        </li>
+                                        <li class="message_contextmenu_list_item">
+                                            <button type="button" class="btn_btn" aria-label="">View</button>
+                                        </li>
+                                        <li class="message_contextmenu_list_item">
+                                            <button type="button" class="btn_btn" aria-label="">Edit</button>
+                                        </li>
+                                        <li class="message_contextmenu_list_item">
+                                            <button type="button" class="btn_btn" aria-label="">Delete</button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+
+                            <li class="recipient" data-message_status="delivered"
+                                data-message_id="1hbsc8tdfhy3mo4wkuviqx435o9hgg86">
+                                <div class="message_content">
+                                    <div class="message_body">
+                                        <div class="img_container">
+                                            <img src="./../uploads/userAvatars/n7W2FwpydImLts5bH9AcgEDMzN0vGiuq.png">
+                                        </div>
+                                        <p class="message_text">Lorem ipsum dolor sit amet consectetur adipisicing
+                                            elit. Blanditiis dolorem iste sed nesciunt ullam perferendis alias saepe
+                                            illum, similique dolore aliquam quam error nemo, voluptatum nostrum
+                                            animi
+                                            illo. Iure, deleniti.
+                                        </p>
+                                    </div>
+                                    <div class="message_footer">
+                                        <span class="status">
+                                            <i class="icon_check-solid"></i><i class="icon_check-solid"></i>
+                                        </span>
+                                        <time datatime="">6:07 AM</time>
+                                    </div>
+                                </div>
+
+                                <div class="message_contextmenu">
+                                    <ul class="message_contextmenu_list">
+                                        <li class="message_contextmenu_list_item">
+                                            <button type="button" class="btn_btn" aria-label="">Reply</button>
+                                        </li>
+                                        <li class="message_contextmenu_list_item">
+                                            <button type="button" class="btn_btn" aria-label="">Forward</button>
+                                        </li>
+                                        <li class="message_contextmenu_list_item">
+                                            <button type="button" class="btn_btn" aria-label="">Copy</button>
+                                        </li>
+                                        <li class="message_contextmenu_list_item">
+                                            <button type="button" class="btn_btn" aria-label="">View</button>
+                                        </li>
+                                        <li class="message_contextmenu_list_item">
+                                            <button type="button" class="btn_btn" aria-label="">Delete</button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+
+                            <li class="sender" data-message_status="delivered"
+                                data-message_id="1hbsc8tdfhy3mo4wkuviqx435o9hgg86">
+
+                                <div class="message_content">
+
+                                    <div class="message_body">
+
+                                        <div class="img_container">
+                                            <img src="./../uploads/userAvatars/n7W2FwpydImLts5bH9AcgEDMzN0vGiuq.png">
+                                        </div>
+
+                                        <p class="message_text">
+                                            Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                                            Blanditiis dolorem iste sed nesciunt ullam perferendis alias saepe
+                                            illum,
+                                            similique dolore aliquam quam error nemo, voluptatum nostrum animi illo.
+                                            Iure, deleniti.
+                                        </p>
+                                    </div>
+
+                                    <div class="message_footer">
+                                        <time datetime="">6:07 AM </time>
+                                        <span class="status">
+                                            <i class="icon_check-solid"></i><i class="icon_check-solid"></i>
+                                        </span>
+                                    </div>
+
+                                </div>
+
+                            </li>
+
+                            <li class="sender" data-message_status="removed"
+                                data-message_id="1hbsc8tdfhy3mo4wkuviqx435o9hgg86">
+
+                                <div class="message_content">
+
+                                    <div class="message_body">
+                                        <p class="message_text">
+                                            A message was removed.
+                                        </p>
+                                    </div>
+
+                                    <div class="message_footer">
+                                        <time datetime="">6:07 AM </time>
+                                        <span class="status">
+                                            <i class="icon_check-solid"></i><i class="icon_check-solid"></i>
+                                        </span>
+                                    </div>
+
+                                </div>
+
+                            </li>
+
+                            <li class="sender" data-message_status="delivered"
+                                data-message_id="1hbsc8tdfhy3mo4wkuviqx435o9hgg86">
+                                <div class="message_content">
+                                    <div class="message_body">
+                                        <div class="img_container">
+                                            <img src="./../uploads/userAvatars/n7W2FwpydImLts5bH9AcgEDMzN0vGiuq.png">
+                                        </div>
+                                    </div>
+                                    <div class="message_footer">
+                                        <time datetime="">6:07 AM</time>
+                                        <span class="status">
+                                            <i class="icon_check-solid"></i><i class="icon_check-solid"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+
+                        <form method="post" action="#" class="message_form">
+                            <button type="button" class="btn_icon">
+                                <i class="icon_microphone-solid"></i>
+                            </button>
+                            <input type="text" placeholder="Type something..." name="send_message">
+                            <div class="dropdown">
+                                <button type="button" class="btn_icon icon_dropdown" data-btn="attach">
+                                    <i class="icon_paperclip-solid"></i>
+                                </button>
+
+                                <ul class="icon_dropdown_menu" data-position="top_right" data-state="closed">
+
+                                    <li class="icon_dropdown_menu_item">
+                                        <button type="button" class="btn_btn">
+                                            Attach File
+                                        </button>
+                                    </li>
+
+                                    <li class="icon_dropdown_menu_item">
+                                        <label type="button" class="label_btn">
+                                            Attach Photo
+                                            <input type="file" data-upload="images" accept="image/*" multiple="">
+                                        </label>
+                                    </li>
+
+                                </ul>
+                            </div>
+
+                            <div class="dropdown">
+                                <button type="button" class="btn_icon icon_dropdown" data-btn="emojis">
+                                    <i class="icon_face-smile-regular"></i>
+                                </button>
+
+                                <ul class="icon_dropdown_menu" data-position="top_right" data-state="closed">
+
+                                    <li class="icon_dropdown_menu_item">
+                                        <button type="button" class="btn_btn">
+                                            Attach File
+                                        </button>
+                                    </li>
+
+                                    <li class="icon_dropdown_menu_item">
+                                        <button type="button" class="btn_btn">
+                                            Attach Photo
+                                        </button>
+                                    </li>
+
+                                </ul>
+                            </div>
+                            <button type="submit" class="btn_icon">
+                                <i class="icon_paper-plane-solid"></i>
+                            </button>
+                        </form>
+
+                    </section>
+
+                    <aside class="chat_side_panel" modal_container="side_panel_modal" data-state="closed">
+
+                        <div class="container">
+
+                            <div class="container_main" data-menu_container="side_panel_menu" data-state="open">
+
+                                <header class="panel_header">
+                                    <button type="button" class="btn_icon" data-modal_btn="side_panel_modal"
+                                        aria-label="" aria-controls="">
+                                        <i class="icon_xmark-solid"></i>
+                                    </button>
+
+                                    <h2>Side Panel</h2>
+                                </header>
+
+                                <div class="panel_body">
+
+                                    <div class="panel_body_header">
+
+                                        <div class="profile_container">
+                                            <div class="profile_avatar_container">
+                                                <img src="../uploads/userAvatars/user.svg">
+                                                <span class="profile_status"></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="profile_name">
+                                            Seid Ali
+                                        </div>
+                                    </div>
+
+                                    <div class="buttons_container">
+
+                                        <ul class="action_buttons">
+                                            <li class="action_button">
+                                                <button type="button" aria-label="">
+                                                    1
+                                                </button>
+                                            </li>
+
+                                            <li class="action_button">
+                                                <button type="button" aria-label="">
+                                                    2
+                                                </button>
+                                            </li>
+
+                                            <li class="action_button">
+                                                <button type="button" aria-label="">
+                                                    3
+                                                </button>
+                                            </li>
+
+                                        </ul>
+
+                                        <ul class="navigation_list">
+
+                                            <li class="navigation_list_item">
+                                                <button type="button" class="btn_btn"
+                                                    data-modal_menu_btn="members_container" aria-label="">
+                                                    Members
+                                                </button>
+                                            </li>
+
+                                            <li class="navigation_list_item">
+                                                <button type="button" class="btn_btn" aria-label="">
+                                                    Stared message(s)
+                                                </button>
+                                            </li>
+
+                                            <li class="navigation_list_item">
+                                                <button type="button" class="btn_btn" aria-label="">
+                                                    Media
+                                                </button>
+                                            </li>
+
+                                            <li class="navigation_list_item">
+                                                <button type="button" class="btn_btn" aria-label="">
+                                                    Appearance
+                                                </button>
+                                            </li>
+
+                                            <li class="navigation_list_item">
+                                                <button type="button" class="btn_btn" aria-label="">
+                                                    About
+                                                </button>
+                                            </li>
+                                        </ul>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="container_sub" data-menu_container="members_container" data-state="closed">
+
+                                <header class="panel_header">
+                                    <button type="button" class="btn_icon" data-modal_menu_btn="side_panel_menu"
+                                        aria-label="" aria-controls="">
+                                        <i class="icon_angle-left-solid"></i>
+                                    </button>
+
+                                    <h2>Members</h2>
+                                </header>
+
+                                <div class="panel_body">
+
+                                    <ul class="members_list">
+                                        <li class="members_list_item">
+                                            <div class="avatar_container">
+                                                <img src="../uploads/userAvatars/user.svg">
+                                            </div>
+                                            <div class="metadata_container">
+                                                <span>Seid Ali</span>
+                                                <small>Online</small>
+                                            </div>
+                                            <div class="actions_container">
+                                                <button type="button" class="btn_icon" aria-label="">
+                                                    <i class="icon_ellipsis-vertical-solid"></i>
+                                                </button>
+                                            </div>
+                                        </li>
+                                    </ul>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </aside>
+
+                </section> -->
+
+            </div>
+
+        </div>
+    </main>
+
+    <!-- <div class="video_container">
+        <video class="recipientsView" id="recipientsView" autoplay></video>
+        <video class="sendersView" id="sendersView"></video>
+    </div> -->
+
+    <!-- <div class="video_call" data-conversation_id="49d4529c060cdf4515d93cd97e2bdd7d" data-mode="videoMode">
+
+        <div class="video_call_container">
+
+            <div class="container_wrapper">
+
+                <div class="profile_avatar">
+                    <div class="avatar_wrapper">
+                        <img src="../uploads/userAvatars/user.svg">
+                    </div>
+                </div>
+
+                <div class="profile_name">
+                    <h3>Seid Ali</h3>
+                    <p>incoming video call <span class="dots"><span></span><span></span><span></span></span></p>
+                </div>
+
+                <div class="buttons">
+                    <button type="button" class="btn_icon" data-btn="videoCallCancel" aria-label="">
+                        <i class="icon_phone-slash-solid"></i>
+                    </button>
+
+                    <button type="button" class="btn_icon" data-btn="videoCallAccept" aria-label="">
+                        <i class="icon_phone-solid"></i>
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="video_container">
+
+            <div class="remote_container">
+                <video class="recipientsView" id="remoteVideo" autoplay> </video>
+
+                <div class="recipientsView_controls">
+                    <button type="button" class="btn_icon" data-btn="toggleVideo" aria-label="">
+                        <i class="icon_video-solid"></i>
+                    </button>
+                    <button type="button" class="btn_icon" data-btn="toggleVolume" aria-label="">
+                        <i class="icon_volume-high-solid"></i>
+                    </button>
+                    <button type="button" class="btn_icon" data-btn="toggleMicrophone" aria-label="">
+                        <i class="icon_microphone-solid"></i>
+                    </button>
+                    <button type="button" class="btn_icon hangup_call" data-btn="hangup_call" aria-label="">
+                        <i class="icon_phone-slash-solid"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="local_container">
+                <video class="sendersView" id="localVideo" autoplay></video>
+            </div>
+
+        </div>
+
+    </div> -->
+
+    <!-- <div class="video_call" data-conversation_id="49d4529c060cdf4515d93cd97e2bdd7d" data-mode="videoMode">
+
+        <div class="video_call_container">
+
+            <div class="container_wrapper">
+
+                <div class="profile_avatar">
+                    <div class="avatar_wrapper">
+                        <img src="../uploads/userAvatars/user.svg">
+                    </div>
+                </div>
+
+                <div class="profile_name">
+                    <h3>Seid Ali</h3>
+                    <p>incoming video call <span class="dots"><span></span><span></span><span></span></span></p>
+                </div>
+
+                <div class="buttons">
+                    <button type="button" class="btn_icon" data-btn="videoCallCancel" aria-label="">
+                        <i class="icon_phone-slash-solid"></i>
+                    </button>
+
+                    <button type="button" class="btn_icon" data-btn="videoCallAccept" aria-label="">
+                        <i class="icon_phone-solid"></i>
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="video_container_group">
+
+            <div class="remote_container">
+                <div class="video_body">
+                    <video class="recipientsView" id="remoteVideo" autoplay> </video>
+                    <h4>Seid Ali</h4>
+                </div>
+                <div class="video_body">
+                    <video class="recipientsView" id="remoteVideo" autoplay> </video>
+                    <h4>Seid Ali</h4>
+                </div>
+                <div class="video_body">
+                    <video class="recipientsView" id="remoteVideo" autoplay> </video>
+                    <h4>Seid Ali</h4>
+                </div>
+                <div class="video_body">
+                    <video class="recipientsView" id="remoteVideo" autoplay> </video>
+                    <h4>Seid Ali</h4>
+                </div>
+            </div>
+
+            <div class="local_container">
+                <div class="video_body">
+                    <video class="sendersView" id="localVideo" autoplay></video>
+                </div>
+            </div>
+
+        </div>
+
+    </div> -->
+
+    <script type="module" src="./assets/js/index.js"></script>
+    <!-- <script type="module" src="./assets/js/script.js"></script> -->
+    <script type="module" src="./assets/js/main.js"></script>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"
+        integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
