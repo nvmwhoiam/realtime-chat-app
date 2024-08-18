@@ -1,19 +1,14 @@
 import {
-    sendMessageGroup,
-    recipientMessageGroup,
     createUserItemGroup,
     createChatContainerGroup,
 } from './functions.js';
 
 import {
     incrementPending,
-    decrementPending
+    decrementPending,
+    setClosingToClosed,
+    setClosedToOpen
 } from '../functions.js';
-
-
-import {
-    chatEventListeners
-} from '../main.js';
 
 'use strict'
 
@@ -27,10 +22,12 @@ const handleConversations = (socket) => {
     const groupDescriptionInput = document.querySelector('[name="group_description"]');
 
     const searchProfileToRequestGroupConversation = document.querySelector('[name="search_group_conversation_to_create"]');
-    const searchGroupConversationToCreateResults = document.querySelector('[data-group-conversation="search_group_conversation_to_create_results"]');
+    const searchGroupConversationToCreateResults = document.querySelector('[data-list="group_conversation_request_search_results"]');
     const groupRequestConversationList = document.querySelector('.group_request_conversation_list');
 
-    const conversationRequestElement = document.querySelector('[data-conversation="pending_list"]');
+    const conversationRequestElement = document.querySelector('[data-list="pending_conversations"]');
+
+    const conversationCreateModal = document.querySelector('[data-modal_container="conversation_create_modal"]');
 
     let searchTimeout;
 
@@ -56,8 +53,6 @@ const handleConversations = (socket) => {
         for (const profile of users) {
             profileToRequestPrivateConversationUI(profile);
         }
-
-        groupConversationInviteCancelEvent();
     });
 
     // Gets a feedback to create a group conversation
@@ -69,17 +64,13 @@ const handleConversations = (socket) => {
     socket.on('groupConversationRequestFeedbackToRecipient', (conversationData) => {
         recipientGroupConversationInviteUI(conversationData);
 
-        requestConversationFeedbackEvent();
-
         incrementPending('conversationPending');
-
     });
 
-    socket.on('groupConversationRequestAcceptedFeedback', (chatData) => {
-        handleGroupConversationCreation(chatData);
+    socket.on('groupConversationRequestAcceptedFeedback', (chatData, profileName) => {
+        handleGroupConversationCreation(chatData, profileName);
 
         decrementPending('conversationPending');
-
     });
 
     // Function to remove conversation request when a profile rejects the request
@@ -101,9 +92,6 @@ const handleConversations = (socket) => {
         if (isLength > 0) {
             // Example usage
             incrementPending('conversationPending', isLength); // Increment pending count for conversation settings
-
-            // Function to attach event
-            requestConversationFeedbackEvent();
         }
 
     });
@@ -126,35 +114,41 @@ const handleConversations = (socket) => {
 
         socket.emit('groupConversationRequest', inviteData);
 
+        // Clear the input fields directly
+        groupNameInput.value = '';
+        groupDescriptionInput.value = '';
+
+        groupRequestConversationList.innerHTML = '';
+
+        groupConversationMembersToInvite.clear();
+
+        closeModalContainers(conversationCreateModal);
     });
 
     function handleGroupConversationCreation(chatData, profileName) {
 
         createUserItemGroup(chatData, profileName);
 
-        createChatContainerGroup(chatData)
-
-        // chatEventListeners();
-
-        //TODO investigate the function further
+        createChatContainerGroup(chatData);
     }
 
     function profileToRequestPrivateConversationUI(profile) {
         const chatMessageHTML = `
-            <li class="request_conversation_profile" data-profileName="${profile.profileName}">
-                <div class="request_conversation_profile_body">
-                    <div class="profile_image">
-                        <img src="../uploads/userAvatars/${profile.profileAvatar}" alt="Profile avatar" aria-label="Profile avatar">
-                    </div>
-                    <div class="details">
-                        <span class="profile_name">@${profile.profileName}</span>
-                        <small>Not verified</small>
-                    </div>
+            <li class="profile_element" data-profileName="${profile.profileName}">
+                <div class="avatar_container">
+                    <img src="../uploads/userAvatars/${profile.profileAvatar}" alt="Profile avatar"
+                        aria-label="Profile avatar">
                 </div>
-                <div class="buttons">
-                    <button type="button" class="btn_icon ${profile.requestStatus === 'pending' ? "active" : ''}" data-group-conversation="inviteCancel">
-                        <i class="icon_plus-solid"></i>
-                    </button>
+
+                <div class="content_container">
+                    <b class="profile_name">@${profile.profileName}</b>
+                    <small>Not verified</small>
+                </div>
+
+                <div class="buttons_container">
+                    <button type="button" class="btn_icon ${profile.requestStatus === 'pending' ? " active" : ''}" data-conversation="inviteCancel">
+                    <i class="icon_plus-solid"></i>
+                </button>
                 </div>
             </li>
             `;
@@ -162,16 +156,19 @@ const handleConversations = (socket) => {
         searchGroupConversationToCreateResults.insertAdjacentHTML('beforeend', chatMessageHTML);
     }
 
-    function groupConversationInviteCancelEvent() {
-        const inviteCancel = document.querySelectorAll('[data-group-conversation="inviteCancel"]');
+    searchGroupConversationToCreateResults.addEventListener('click', function (event) {
+        // Use closest to find the nearest .conversation ancestor
+        const inviteCancel = event.target.closest('[data-conversation="inviteCancel"]');
 
-        inviteCancel.forEach(button => {
-            button.addEventListener('click', handleGroupConversationLogic);
-        });
-    }
+        if (inviteCancel) {
+            handleGroupConversationLogic(inviteCancel);
+        }
+    });
 
-    function handleGroupConversationLogic() {
-        const parentContainer = this.closest('.request_conversation_profile');
+
+
+    function handleGroupConversationLogic(selectorElement) {
+        const parentContainer = selectorElement.closest('.profile_element');
         const invitedProfileName = parentContainer.getAttribute('data-profileName');
 
         const invitedProfileAvatar = parentContainer.querySelector('img').src;
@@ -181,13 +178,13 @@ const handleConversations = (socket) => {
             profileName: invitedProfileName
         }
 
-        if (!this.classList.contains('active')) {
+        if (!selectorElement.classList.contains('active')) {
             groupConversationMembersToInvite.add(invitedProfileName);
-            this.classList.add('active');
+            selectorElement.classList.add('active');
             senderGroupConversationInviteProfilesUIAdd(profileData);
         } else {
             groupConversationMembersToInvite.delete(invitedProfileName);
-            this.classList.remove('active');
+            selectorElement.classList.remove('active');
             senderGroupConversationInviteProfilesUIRemove(invitedProfileName);
         }
     }
@@ -211,24 +208,26 @@ const handleConversations = (socket) => {
 
     function recipientGroupConversationInviteUI(conversationData) {
         const chatMessageHTML = `
-            <li class="request_conversation_profile" data-conversation_request_id="${conversationData.customID}">
+            <li class="profile_element" data-conversation_request_id="${conversationData.customID}">
 
-                <div class="request_conversation_profile_body">
-                    <div class="profile_image">
-                        <img src="../uploads/userAvatars/${conversationData.groupData.groupAvatar}" alt="Group avatar" aria-label="Group avatar">
-                    </div>
-                    <div class="details">
-                        <span class="profile_name">${conversationData.groupData.groupName}</span>
-                        <small>Not verified</small>
-                    </div>
+                <div class="avatar_container">
+                    <img src="../uploads/userAvatars/${conversationData.groupData.groupAvatar}" alt="Profile avatar"
+                        aria-label="profile avatar">
                 </div>
 
-                <div class="buttons">
-                    <button type="button" class="btn_icon" data-group-conversation="request_accept">
+                <div class="content_container">
+                    <b class="content_name">${conversationData.groupData.groupName}</b>
+                    <small>Not verified</small>
+                </div>
+
+                <div class="buttons_container">
+                    <button type="button" class="btn_icon"
+                        data-conversation="request_accept">
                         <i class="icon_check-solid"></i>
                     </button>
 
-                    <button type="button" class="btn_icon" data-group-conversation="request_reject">
+                    <button type="button" class="btn_icon"
+                        data-conversation="request_reject">
                         <i class="icon_xmark-solid"></i>
                     </button>
                 </div>
@@ -238,37 +237,44 @@ const handleConversations = (socket) => {
         conversationRequestElement.insertAdjacentHTML('beforeend', chatMessageHTML);
     }
 
-    function requestConversationFeedbackEvent() {
-        const acceptRequests = document.querySelectorAll('[data-group-conversation="request_accept"]');
-        const rejectRequests = document.querySelectorAll('[data-group-conversation="request_reject"]');
+    conversationRequestElement.addEventListener('click', function (event) {
+        const acceptRequest = event.target.closest('[data-conversation="request_accept"]');
+        const rejectRequest = event.target.closest('[data-conversation="request_reject"]');
 
-        acceptRequests.forEach(eachBtn => {
-            eachBtn.removeEventListener('click', handleOnRequestAccepted);
-            eachBtn.addEventListener('click', () => handleOnRequestAccepted(eachBtn));
-        });
+        if (acceptRequest) {
+            handleOnRequestAccepted(acceptRequest);
+        }
 
-        rejectRequests.forEach(eachBtn => {
-            eachBtn.removeEventListener('click', handleOnRequestRejected);
-            eachBtn.addEventListener('click', () => handleOnRequestRejected(eachBtn));
-        });
-    }
+        if (rejectRequest) {
+            handleOnRequestRejected(rejectRequest);
+        }
+    });
 
-    function handleOnRequestAccepted(eachBtn) {
-        const requestConversationProfile = eachBtn.closest('.request_conversation_profile');
+    function handleOnRequestAccepted(selectorElement) {
+        const requestConversationProfile = selectorElement.closest('.profile_element');
         const customID = requestConversationProfile.getAttribute('data-conversation_request_id');
         socket.emit('groupConversationRequestAccepted', customID);
-
         requestConversationProfile.remove();
-
     }
 
-    function handleOnRequestRejected(eachBtn) {
-        const requestConversationProfile = eachBtn.closest('.request_conversation_profile');
+    function handleOnRequestRejected(selectorElement) {
+        const requestConversationProfile = selectorElement.closest('.profile_element');
         const customID = requestConversationProfile.getAttribute('data-conversation_request_id');
         socket.emit('groupConversationRequestRejected', customID);
-
         requestConversationProfile.remove();
+    }
 
+    function closeModalContainers(selectorElement) {
+        setClosingToClosed(selectorElement);
+
+        const selectorElementMain = selectorElement.querySelector('.container_main');
+        const selectorElementSubs = selectorElement.querySelectorAll('.container_sub');
+
+        setClosedToOpen(selectorElementMain);
+
+        selectorElementSubs.forEach(eachSub => {
+            setClosingToClosed(eachSub);
+        });
     }
 
 }

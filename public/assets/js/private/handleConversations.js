@@ -1,6 +1,4 @@
 import {
-    sendMessage,
-    recipientMessage,
     createUserItem,
     createChatContainer,
 } from './functions.js';
@@ -10,15 +8,13 @@ import {
     decrementPending
 } from '../functions.js';
 
-import {
-    chatEventListeners
-} from '../main.js';
+'use strict'
 
 const handleConversations = (socket) => {
 
     const searchProfileToRequestPrivateConversation = document.querySelector('[name="searchProfileToRequestPrivateConversation"]');
-    const searchPrivateConversationToCreateResults = document.querySelector('[data-conversation="request_search_results"]');
-    const conversationRequestElement = document.querySelector('[data-conversation="pending_list"]');
+    const searchPrivateConversationToCreateResults = document.querySelector('[data-list="private_conversation_request_search_results"]');
+    const conversationRequestElement = document.querySelector('[data-list="pending_conversations"]');
 
     let searchTimeout;
 
@@ -44,16 +40,12 @@ const handleConversations = (socket) => {
         for (const profile of profiles) {
             profileToRequestPrivateConversationUI(profile);
         }
-
-        privateConversationIRequestCancelEvent();
     });
 
     socket.on('privateConversationRequestFeedback', (profileData) => {
         profileOfRequestedConversationUI(profileData);
 
         incrementPending('conversationPending'); // Increment pending count for conversation settings
-
-        privateConversationRequestFeedbackEvent();
     });
 
     // Function to remove conversation request when a profile cancels the request 
@@ -78,8 +70,6 @@ const handleConversations = (socket) => {
         searchPrivateConversationToCreateResults.innerHTML = '';
 
         decrementPending('conversationPending'); // Decrement pending count for conversation settings
-
-        chatEventListeners();
     });
 
     // Function to remove conversation request when a profile rejects the request
@@ -99,31 +89,27 @@ const handleConversations = (socket) => {
         const isLength = conversationRequested.length;
 
         if (isLength > 0) {
-            // Example usage
             incrementPending('conversationPending', isLength); // Increment pending count for conversation settings
-
-            // Function to attach event
-            privateConversationRequestFeedbackEvent();
         }
-
     });
 
     function profileToRequestPrivateConversationUI(profile) {
         const chatMessageHTML = `
-            <li class="request_conversation_profile" data-profileName="${profile.profileName}">
-                <div class="request_conversation_profile_body">
-                    <div class="profile_image">
-                        <img src="../uploads/userAvatars/${profile.profileAvatar}" alt="profile avatar" aria-label="profile avatar">
-                    </div>
-                    <div class="details">
-                        <span class="profile_name">@${profile.profileName}</span>
-                        <small>Not verified</small>
-                    </div>
+            <li class="profile_element" data-profileName="${profile.profileName}">
+                <div class="avatar_container">
+                    <img src="../uploads/userAvatars/${profile.profileAvatar}" alt="Profile avatar"
+                        aria-label="Profile avatar">
                 </div>
-                <div class="buttons">
-                    <button type="button" class="btn_icon ${profile.requestStatus === 'pending' ? "active" : ''}" data-conversation="requestCancel">
-                        <i class="icon_plus-solid"></i>
-                    </button>
+
+                <div class="content_container">
+                    <b class="profile_name">@${profile.profileName}</b>
+                    <small>Not verified</small>
+                </div>
+
+                <div class="buttons_container">
+                    <button type="button" class="btn_icon${profile.requestStatus === 'pending' ? " active" : ''}" data-conversation="requestCancel">
+                    <i class="icon_plus-solid"></i>
+                </button>
                 </div>
             </li>
             `;
@@ -131,74 +117,75 @@ const handleConversations = (socket) => {
         searchPrivateConversationToCreateResults.insertAdjacentHTML('beforeend', chatMessageHTML);
     }
 
-    function privateConversationIRequestCancelEvent() {
-        const requestCancel = document.querySelectorAll('[data-conversation="requestCancel"]');
+    searchPrivateConversationToCreateResults.addEventListener('click', function (event) {
+        // Use closest to find the nearest .conversation ancestor
+        const requestCancel = event.target.closest('[data-conversation="requestCancel"]');
 
-        requestCancel.forEach(button => {
-            button.addEventListener('click', handleRequestCancelConversationLogic);
-        });
-    }
+        if (requestCancel) {
+            handleRequestCancelConversationLogic(requestCancel);
+        }
+    });
 
-    function handleRequestCancelConversationLogic() {
-        const parentContainer = this.closest('.request_conversation_profile');
+    function handleRequestCancelConversationLogic(selectorElement) {
+        const parentContainer = selectorElement.closest('.profile_element');
 
         const profileNameRequested = parentContainer.getAttribute('data-profileName');
 
-        if (!this.classList.contains('active')) {
-            this.classList.add('active');
+        if (!selectorElement.classList.contains('active')) {
+            selectorElement.classList.add('active');
             socket.emit('privateConversationRequest', profileNameRequested);
         } else {
-            this.classList.remove('active');
+            selectorElement.classList.remove('active');
             socket.emit('privateConversationRequestCancel', profileNameRequested);
         }
     }
 
     function profileOfRequestedConversationUI(profile) {
         const chatMessageHTML = `
-            <li class="request_conversation_profile" data-conversation_request_id="${profile.customID}">
+            <li class="profile_element" data-conversation_request_id="${profile.customID}">
 
-                <div class="request_conversation_profile_body">
-                    <div class="profile_image">
-                        <img src="../uploads/userAvatars/${profile.senderData.profileAvatar}" alt="profile avatar" aria-label="profile avatar">
-                    </div>
-                    <div class="details">
-                        <span class="profile_name">@${profile.senderData.profileName}</span>
-                        <small>Not verified</small>
-                    </div>
+                <div class="avatar_container">
+                    <img src="../uploads/userAvatars/${profile.senderData.profileAvatar}" alt="Profile avatar"
+                        aria-label="profile avatar">
                 </div>
 
-                <div class="buttons">
-                    <button type="button" class="btn_icon" data-private-conversation="request_accept">
+                <div class="content_container">
+                    <b class="content_name">@${profile.senderData.profileName}</b>
+                    <small>Not verified</small>
+                </div>
+
+                <div class="buttons_container">
+                    <button type="button" class="btn_icon"
+                        data-conversation="request_accept">
                         <i class="icon_check-solid"></i>
                     </button>
 
-                    <button type="button" class="btn_icon" data-private-conversation="request_reject">
+                    <button type="button" class="btn_icon"
+                        data-conversation="request_reject">
                         <i class="icon_xmark-solid"></i>
                     </button>
                 </div>
             </li>
-            `;
+    `;
 
         conversationRequestElement.insertAdjacentHTML('beforeend', chatMessageHTML);
     }
 
-    function privateConversationRequestFeedbackEvent() {
-        const acceptRequests = document.querySelectorAll('[data-private-conversation="request_accept"]');
-        const rejectRequests = document.querySelectorAll('[data-private-conversation="request_reject"]');
+    conversationRequestElement.addEventListener('click', function (event) {
+        const acceptRequest = event.target.closest('[data-conversation="request_accept"]');
+        const rejectRequest = event.target.closest('[data-conversation="request_reject"]');
 
-        acceptRequests.forEach(eachBtn => {
-            eachBtn.removeEventListener('click', handleOnRequestAccepted);
-            eachBtn.addEventListener('click', () => handleOnRequestAccepted(eachBtn));
-        });
+        if (acceptRequest) {
+            handleOnRequestAccepted(acceptRequest);
+        }
 
-        rejectRequests.forEach(eachBtn => {
-            eachBtn.removeEventListener('click', handleOnRequestRejected);
-            eachBtn.addEventListener('click', () => handleOnRequestRejected(eachBtn));
-        });
-    }
+        if (rejectRequest) {
+            handleOnRequestRejected(rejectRequest);
+        }
+    });
 
-    function handleOnRequestAccepted(eachBtn) {
-        const requestConversationProfile = eachBtn.closest('.request_conversation_profile');
+    function handleOnRequestAccepted(selectorElement) {
+        const requestConversationProfile = selectorElement.closest('.profile_element');
         const customID = requestConversationProfile.getAttribute('data-conversation_request_id');
         socket.emit('privateConversationRequestAccepted', customID);
 
@@ -208,8 +195,8 @@ const handleConversations = (socket) => {
 
     }
 
-    function handleOnRequestRejected(eachBtn) {
-        const requestConversationProfile = eachBtn.closest('.request_conversation_profile');
+    function handleOnRequestRejected(selectorElement) {
+        const requestConversationProfile = selectorElement.closest('.profile_element');
         const customID = requestConversationProfile.getAttribute('data-conversation_request_id');
         socket.emit('privateConversationRequestRejected', customID);
 

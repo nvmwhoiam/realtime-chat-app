@@ -7,9 +7,6 @@ import {
 
 import {
     sendMessage,
-    recipientMessage,
-    createUserItem,
-    createChatContainer,
     ifActiveSetMessageStatusDelivered,
     ifActiveSetMessageStatusRead,
 } from './functions.js';
@@ -27,11 +24,6 @@ const sender = (socket) => {
     socket.on('messageDeliveredFeedback', (messageID, conversationID) => {
         ifActiveSetMessageStatusDelivered(messageID, conversationID);
     });
-
-    // socket.emit("typingStart", "cBcL4cvzYhHM");
-    // socket.emit("typingStop", "cBcL4cvzYhHM");
 };
 
 export default sender;
-
-// ! Looks quite messy needs to be tidied

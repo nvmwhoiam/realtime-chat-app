@@ -3,10 +3,7 @@ import setupRecipient from './recipient.js';
 import handleConversations from "./handleConversations.js";
 
 import {
-    closeChat,
     resetDisplayedDividers,
-    dropdownMenu,
-    hourMinuteDateFormat,
     observeMessages,
     handleUnreadMessages
 } from "../functions.js";
@@ -14,8 +11,6 @@ import {
 import {
     sendMessage,
     recipientMessage,
-    createUserItem,
-    createChatContainer,
     ifActiveSetMessageStatusDelivered,
     ifActiveSetMessageStatusRead,
 } from './functions.js';

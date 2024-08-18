@@ -8,8 +8,8 @@
     <link rel="stylesheet" type="text/css" media="screen" href="assets/css/index.css">
     <meta name="description"
         content="Experience seamless communication with our innovative chat app, available as a Progressive Web App (PWA) and on the web. Stay connected effortlessly with friends and colleagues, enjoying real-time messaging, voice and video calls. Our user-friendly interface and cross-platform compatibility ensure a smooth chatting experience anytime, anywhere. Elevate your conversations with rich multimedia sharing and customizable features. Embrace the future of communication with our versatile PWA and web-based chat application - where connectivity meets convenience!">
-    <link rel="icon" type="image/x-icon" href="./assets/img/favicon-16x16.png">
-    <link rel="icon" type="image/x-icon" href="./assets/img/favicon-32x32.png">
+    <!-- <link rel="icon" type="image/x-icon" href="./assets/img/favicon-16x16.png">
+    <link rel="icon" type="image/x-icon" href="./assets/img/favicon-32x32.png"> -->
     <meta name="robots" content="index, follow">
     <!-- <link rel="canonical" href=""> -->
     <!-- <meta name="author" content="Your Name"> -->
@@ -41,10 +41,6 @@
 <body>
 
     <main class="main_container">
-
-        <!-- <div class="emojis">
-            <ul class="emojiss"></ul>
-        </div> -->
 
         <div class="chatapp GRBg2FHmd9">
 
@@ -111,10 +107,84 @@
 
                     <div class="user_container_wrapper_body">
 
-                        <ul class="conversation_list tab_content" data-tabContent="conversation_list"
-                            data-conversation="list" data-state="open"> </ul>
+                        <ul class="tab_content" data-tabContent="conversation_list" data-list="conversations"
+                            data-state="open">
 
-                        <ul class="calls_list tab_content" data-tabContent="calls_list" data-state="closed"></ul>
+                            <!-- <li class="conversation_list_item profile_list">
+                                <button type="button" class="conversation_btn profile_element" data-conversation_id="">
+
+                                    <div class="avatar_container profile_image">
+                                        <img src="../uploads/userAvatars/default.svg" alt="Profile avatar"
+                                            aria-label="Profile avatar">
+                                        <span class="profile_status" data-profile="${userData.profileName}"
+                                            data-status="offline"></span>
+                                    </div>
+
+                                    <div class="content_container">
+
+                                        <b class="content_name">New Group</b>
+
+                                        <div class="message_body">
+
+                                            <p class="message_text"> Lorem ipsum dolor sit amet consectetur, adipisicing
+                                                elit. Non inventore a unde provident possimus quo, quas vitae enim
+                                                voluptatem debitis?
+                                            </p>
+
+                                        </div>
+
+                                    </div>
+
+                                    <div class="footer_container">
+
+                                        <div class="time_container">
+                                            <time datetime="">12:12 AM</time>
+                                        </div>
+
+                                        <div class="status_container">
+                                            <span class="not_badge">
+                                                <i class="not_seen_times">0</i>
+                                            </span>
+                                        </div>
+
+                                    </div>
+
+                                </button>
+                            </li> -->
+
+                        </ul>
+
+                        <ul class="tab_content" data-list="calls" data-tabContent="calls_list" data-state="closed">
+                            <li class="profile_element">
+                                <div class="avatar_container">
+                                    <img src="../uploads/userAvatars/user.svg">
+                                </div>
+                                <div class="content_container">
+                                    <div class="profile_name">Seid Ali</div>
+                                    <small>Incoming call - 12 Aug 24</small>
+                                </div>
+                                <div class="buttons_container">
+                                    <button type="button" class="btn_icon" aria-label="">
+                                        <i class="icon_phone-solid"></i>
+                                    </button>
+                                </div>
+                            </li>
+
+                            <li class="profile_element">
+                                <div class="avatar_container">
+                                    <img src="../uploads/userAvatars/user.svg">
+                                </div>
+                                <div class="content_container">
+                                    <div class="profile_name">Seid Ali</div>
+                                    <small>Outcoming call - 12 Aug 24</small>
+                                </div>
+                                <div class="buttons_container">
+                                    <button type="button" class="btn_icon" aria-label="">
+                                        <i class="icon_phone-solid"></i>
+                                    </button>
+                                </div>
+                            </li>
+                        </ul>
 
                     </div>
 
@@ -184,6 +254,7 @@
                                             <!-- <small>Join the group chat</small> -->
                                         </button>
                                     </li>
+
                                     <li class="navigation_list_item">
                                         <button type="button" class="btn_btn"
                                             data-modal_menu_btn="conversation_create_private">
@@ -223,9 +294,7 @@
 
                             <div class="user_container_modal_body">
 
-                                <ul class="user_container_modal_body_list"
-                                    data-group-conversation="search_group_conversation_to_create_results">
-                                </ul>
+                                <ul data-list="group_conversation_request_search_results"> </ul>
 
                                 <ul class="group_request_conversation_list"> </ul>
                             </div>
@@ -263,7 +332,7 @@
                                     <div class="input_wrapper">
                                         <label for="group_name">Group Name</label>
                                         <div class="modal_body_input">
-                                            <input type="text" id="group_name" value="Just IT" aria-label=""
+                                            <input type="text" id="group_name" value="New Group" aria-label=""
                                                 name="group_name" required>
                                         </div>
                                     </div>
@@ -308,8 +377,7 @@
 
                             <div class="user_container_modal_body">
 
-                                <ul class="user_container_modal_body_list" data-conversation="request_search_results">
-                                </ul>
+                                <ul data-list="private_conversation_request_search_results"> </ul>
 
                             </div>
 
@@ -392,7 +460,7 @@
 
                             <div class="user_container_modal_body">
 
-                                <ul class="user_container_modal_body_list" data-conversation="pending_list"> </ul>
+                                <ul data-list="pending_conversations"> </ul>
 
                             </div>
 
@@ -462,7 +530,7 @@
 
             <div class="chats_container" data-state="closed">
 
-                <!-- <section class="chat_container active" data-chat_id="cBcL4cvzYhHM">
+                <section class="chat_container" data-chat_id="">
 
                     <section class="chat_wrapper">
 
@@ -714,9 +782,6 @@
 
                                 </ul>
                             </div>
-                            <button type="submit" class="btn_icon">
-                                <i class="icon_paper-plane-solid"></i>
-                            </button>
                         </form>
 
                     </section>
@@ -737,11 +802,10 @@
                                 </header>
 
                                 <div class="panel_body">
-
                                     <div class="panel_body_header">
 
                                         <div class="profile_container">
-                                            <div class="profile_avatar_container">
+                                            <div class="profile_avatar_wrapper">
                                                 <img src="../uploads/userAvatars/user.svg">
                                                 <span class="profile_status"></span>
                                             </div>
@@ -750,27 +814,36 @@
                                         <div class="profile_name">
                                             Seid Ali
                                         </div>
+
+                                        <p class="group_description">
+                                            Lorem ipsum dolor, sit amet consectetur adipisicing elit.
+                                        </p>
                                     </div>
 
                                     <div class="buttons_container">
-
                                         <ul class="action_buttons">
                                             <li class="action_button">
-                                                <button type="button" aria-label="">
-                                                    1
+                                                <button type="button" class="btn_icon" aria-label="">
+                                                    <i class="icon_check-solid"></i>
                                                 </button>
+
+                                                <small class="btn_title">Leave</small>
                                             </li>
 
                                             <li class="action_button">
-                                                <button type="button" aria-label="">
-                                                    2
+                                                <button type="button" class="btn_icon" aria-label="">
+                                                    <i class="icon_bell-regular"></i>
                                                 </button>
+
+                                                <small class="btn_title">Mute</small>
                                             </li>
 
                                             <li class="action_button">
-                                                <button type="button" aria-label="">
-                                                    3
+                                                <button type="button" class="btn_icon" aria-label="">
+                                                    <i class="icon_magnifying-glass-solid"></i>
                                                 </button>
+
+                                                <small class="btn_title">Search</small>
                                             </li>
 
                                         </ul>
@@ -791,7 +864,8 @@
                                             </li>
 
                                             <li class="navigation_list_item">
-                                                <button type="button" class="btn_btn" aria-label="">
+                                                <button type="button" class="btn_btn"
+                                                    data-modal_menu_btn="media_container" aria-label="">
                                                     Media
                                                 </button>
                                             </li>
@@ -843,7 +917,39 @@
                                                 </button>
                                             </div>
                                         </li>
+
+                                        <li class="members_list_item">
+                                            <div class="avatar_container">
+                                                <img src="../uploads/userAvatars/user.svg">
+                                            </div>
+                                            <div class="metadata_container">
+                                                <span>Seid Ali</span>
+                                                <small>Online</small>
+                                            </div>
+                                            <div class="actions_container">
+                                                <button type="button" class="btn_icon" aria-label="">
+                                                    <i class="icon_ellipsis-vertical-solid"></i>
+                                                </button>
+                                            </div>
+                                        </li>
                                     </ul>
+
+                                </div>
+
+                            </div>
+
+                            <div class="container_sub" data-menu_container="media_container" data-state="closed">
+
+                                <header class="panel_header">
+                                    <button type="button" class="btn_icon" data-modal_menu_btn="side_panel_menu"
+                                        aria-label="" aria-controls="">
+                                        <i class="icon_angle-left-solid"></i>
+                                    </button>
+
+                                    <h2>Media</h2>
+                                </header>
+
+                                <div class="panel_body">
 
                                 </div>
 
@@ -853,17 +959,12 @@
 
                     </aside>
 
-                </section> -->
+                </section>
 
             </div>
 
         </div>
     </main>
-
-    <!-- <div class="video_container">
-        <video class="recipientsView" id="recipientsView" autoplay></video>
-        <video class="sendersView" id="sendersView"></video>
-    </div> -->
 
     <!-- <div class="video_call" data-conversation_id="49d4529c060cdf4515d93cd97e2bdd7d" data-mode="videoMode">
 
@@ -960,7 +1061,7 @@
 
             <div class="remote_container">
                 <div class="video_body">
-                    <video class="recipientsView" id="remoteVideo" autoplay> </video>
+                    <video class="recipientsView" id="localVideo" autoplay> </video>
                     <h4>Seid Ali</h4>
                 </div>
                 <div class="video_body">

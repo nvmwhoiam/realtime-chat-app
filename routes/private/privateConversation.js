@@ -1,20 +1,20 @@
 // privateConversation.js
 
 import mongoose, { mongo } from 'mongoose';
-import userModel from '../models/userSchema.js'; // Import your userModel 
-import profileModel from '../models/profileSchema.js'; // Import your profileModel 
-import privateMessageModel from '../models/privateMessageSchema.js'; // Import your privateMessageModel 
-import privateConversationModel from '../models/privateConversationSchema.js'; // Import your privateConversationModel 
-import conversationRequestModel from '../models/conversationRequestSchema.js'; // Import your conversationRequestModel 
+import userModel from '../../models/userSchema.js'; // Import your userModel 
+import profileModel from '../../models/profileSchema.js'; // Import your profileModel 
+import privateMessageModel from '../../models/privateMessageSchema.js'; // Import your privateMessageModel 
+import privateConversationModel from '../../models/privateConversationSchema.js'; // Import your privateConversationModel 
+import conversationRequestModel from '../../models/conversationRequestSchema.js'; // Import your conversationRequestModel 
 
-import getProfileDataByProfileName from '../utils/getProfileDataByProfileName.js';
-import findUserSocketIDByprofileName from '../utils/findUserSocketIDByprofileName.js';
-import findSocketIDByprofileName from '../utils/findSocketIDByprofileName.js';
-import findProfileIDByProfileName from '../utils/findProfileIDByProfileName.js';
+import getProfileDataByProfileName from '../../utils/getProfileDataByProfileName.js';
+import findUserSocketIDByprofileName from '../../utils/findUserSocketIDByprofileName.js';
+import findSocketIDByprofileName from '../../utils/findSocketIDByprofileName.js';
+import findProfileIDByProfileName from '../../utils/findProfileIDByProfileName.js';
 
-import handleMedia from './private/handleMedia/handleMedia.js';
-import handleTyping from './private/handleChat/handleTyping.js';
-import handleCreateConversation from './private/handleChat/handleCreateConversation.js';
+import handleMedia from './handleMedia/handleMedia.js';
+import handleTyping from './handleChat/handleTyping.js';
+import handleCreateConversation from './handleChat/handleCreateConversation.js';
 
 const setupPrivateConversation = async (io, socket) => {
 
@@ -148,6 +148,7 @@ const setupPrivateConversation = async (io, socket) => {
 
     // await privateMessageModel.deleteMany({});
     // await privateConversationModel.deleteMany({});
+    // await conversationRequestModel.deleteMany({});
 };
 
 export default setupPrivateConversation;

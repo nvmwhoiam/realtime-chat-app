@@ -7,7 +7,7 @@ import {
 } from "../functions.js";
 
 // conversationsItem list elements
-const conversationList = document.querySelector(".conversation_list");
+const conversationList = document.querySelector('[data-list="conversations"]');
 
 // Chat container elements
 const chatContainer = document.querySelector(".chats_container");
@@ -69,30 +69,47 @@ export function createUserItem(userData, chatData) {
 
     const conversationHTML = `
         <li class="conversation_list_item">
-            <button type="button" class="conversation_btn" data-conversation_id="${chatData.conversationID}">
-                <div class="header profile_image">
-                    <img src="../uploads/userAvatars/${userData.profileAvatar}" alt="User avatar" aria-label="User avatar">
-                        <span class="profile_status" data-profile="${userData.profileName}" data-status="offline"></span>
+            <button type="button" class="conversation_btn profile_element" data-conversation_id="${chatData.conversationID}">
+
+                <div class="avatar_container profile_image">
+                    <img src="../uploads/userAvatars/${userData.profileAvatar}" alt="Profile avatar"
+                        aria-label="Profile avatar">
+                        <span class="profile_status" data-profile="${userData.profileName}"
+                            data-status="offline"></span>
                 </div>
-                <div class="message_content">
-                    <b class="profile_name" data-profile="profileName">${userData.profileName}</b>
+
+                <div class="content_container">
+
+                    <b class="content_name" data-profile="profileName">${userData.profileName}</b>
+
                     <div class="message_body">
-                        <p class="message_text">${senderName} ${lastMessageContent}</p>
+
+                        <p class="message_text">
+                            ${senderName} ${lastMessageContent}
+                        </p>
                         <p class="chat_typing"></p>
                     </div>
+
                 </div>
-                <div class="footer">
+
+                <div class="footer_container">
+
                     <div class="time_container">
                         <time datetime="${createdAt}">${formattedDate}</time>
                     </div>
+
                     <div class="status_container">
                         ${messageStatus}
-                        <span class="not_badge"><i class="not_seen_times">0</i></span>
+                        <span class="not_badge">
+                            <i class="not_seen_times">0</i>
+                        </span>
                     </div>
+
                 </div>
+
             </button>
         </li>
-       `;
+        `;
 
     conversationList.insertAdjacentHTML("beforeend", conversationHTML);
 }

@@ -34,7 +34,7 @@ const sessionID = urlParams.get("sessionID");
 const profileAvatars = document.querySelectorAll('.profile_avatar_container');
 
 // conversationsItem list elements
-const conversationList = document.querySelector(".conversation_list");
+const conversationList = document.querySelector('[data-list="conversations"]');
 
 // Chat container elements
 const chatContainer = document.querySelector(".chats_container");
@@ -66,11 +66,11 @@ socket.on("connect", async () => {
             conversationsItem(chatData, profileName);
         }
 
+        chatEventListeners();
+
         if (conversationsData.length === 0) return;
 
         handleOnlineUsers();
-
-        chatEventListeners();
     });
 
     function handleOnlineUsers() {
@@ -109,7 +109,7 @@ socket.on("connect", async () => {
     groupConversationHandle(socket);
 });
 
-export function chatEventListeners() {
+function chatEventListeners() {
     conversationList.addEventListener('click', function (event) {
         // Use closest to find the nearest .conversation ancestor
         const conversationItem = event.target.closest('.conversation_btn');
@@ -297,15 +297,6 @@ function handleTypingStopOnSubmit(chatContainer, type, conversationID) {
     }
 }
 
-function onSeenClickItemLogic(currentButton) {
-    const isSeen = currentButton.classList.contains('not_seen');
-
-    if (isSeen) {
-        currentButton.querySelector(".not_badge .not_seen_times").innerText = 0;
-        currentButton.classList.remove('not_seen');
-    }
-}
-
 // Function to handle conversation item on click
 function handleConversationButtons(currentButton) {
     const conversationsButton = conversationList.querySelectorAll('.conversation_btn');
@@ -345,6 +336,15 @@ function handleConversationButtons(currentButton) {
         socket.emit("requestMessagesGroup", conversationID);
     } else {
         socket.emit("requestMessages", conversationID);
+    }
+}
+
+function onSeenClickItemLogic(currentButton) {
+    const isSeen = currentButton.classList.contains('not_seen');
+
+    if (isSeen) {
+        currentButton.querySelector(".not_badge .not_seen_times").innerText = 0;
+        currentButton.classList.remove('not_seen');
     }
 }
 

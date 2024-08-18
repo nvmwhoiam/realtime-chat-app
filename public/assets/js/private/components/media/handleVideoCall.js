@@ -19,8 +19,8 @@ socket.on("videoCallAcceptPrivateFeedback", (conversationID) => {
     console.log(conversationID);
 });
 
-const cancelVideoCall = document.querySelector('[data-btn="videoCallCancel"]');
-const acceptVideoCall = document.querySelector('[data-btn="videoCallAccept"]');
+// const cancelVideoCall = document.querySelector('[data-btn="videoCallCancel"]');
+// const acceptVideoCall = document.querySelector('[data-btn="videoCallAccept"]');
 
 // cancelVideoCall.addEventListener('click', function () {
 //     const parentElement = this.closest('.video_call');
@@ -52,7 +52,7 @@ function setVideoMode() {
         parentElement.setAttribute('data-mode', 'videoMode');
     }
 
-    // requestVideoStream();
+    requestVideoStream();
 }
 
 // camera.js

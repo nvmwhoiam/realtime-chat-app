@@ -1,8 +1,8 @@
 // socketRouter.js
 
 import express from 'express';
-import setupGroupConversation from './groupConversation.js';
-import setupPrivateConversation from './privateConversation.js';
+import setupGroupConversation from './group/groupConversation.js';
+import setupPrivateConversation from './private/privateConversation.js';
 
 import userIDToSocketID from '../maps/userIDToSocketID.js';
 import roomsTosocketID from '../maps/roomsTosocketID.js';
