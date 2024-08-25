@@ -143,8 +143,10 @@
     :root {
         color-scheme: dark;
         /* Default background colours for dark mode */
-        --background-color: #1f252f;
-        --background-color-secondary: hsl(216, 28%, 17%);
+        // --background-color: #1f252f;
+        --background-color: hsl(0, 0%, 7%);
+        // --background-color-secondary: hsl(216, 28%, 17%);
+        --background-color-secondary: #1c1b1d;
         --text-color: hsl(0, 0%, 90%);
         --link-color: hsl(214, 93%, 62%);
     }

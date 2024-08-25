@@ -17,6 +17,8 @@ import {
     createChatContainer,
 } from './private/functions.js';
 
+import selectors from "./utils/selectors.js";
+
 import { handleVideoCallButton } from "./private/components/media/handleVideoCall.js";
 import { handleVoiceCallButton } from "./private/components/media/handleVoiceCall.js";
 
@@ -29,20 +31,14 @@ import handleTypingStartGroup from './group/components/chat/handleTypingIndicato
 import socket from './socket/socketManager.js'; // Adjust the path as needed
 
 const urlParams = new URLSearchParams(window.location.search);
-const sessionID = urlParams.get("sessionID");
+const sID = urlParams.get("sID");
 
 const profileAvatars = document.querySelectorAll('.profile_avatar_container');
-
-// conversationsItem list elements
-const conversationList = document.querySelector('[data-list="conversations"]');
-
-// Chat container elements
-const chatContainer = document.querySelector(".chats_container");
 
 // Event listener when the socket connects
 socket.on("connect", async () => {
 
-    socket.emit('fetchUserData', sessionID);
+    socket.emit('fetchUserData', sID);
 
     // Add event listeners to interact with the server
     socket.on('userData', (userData) => {
@@ -60,7 +56,7 @@ socket.on("connect", async () => {
     });
 
     socket.on('participantsData', (conversationsData, profileName) => {
-        conversationList.innerHTML = '';
+        selectors.conversationList.innerHTML = '';
 
         for (const chatData of conversationsData) {
             conversationsItem(chatData, profileName);
@@ -110,7 +106,7 @@ socket.on("connect", async () => {
 });
 
 function chatEventListeners() {
-    conversationList.addEventListener('click', function (event) {
+    selectors.conversationList.addEventListener('click', function (event) {
         // Use closest to find the nearest .conversation ancestor
         const conversationItem = event.target.closest('.conversation_btn');
 
@@ -119,7 +115,7 @@ function chatEventListeners() {
         }
     });
 
-    chatContainer.addEventListener('click', function (event) {
+    selectors.chatsContainer.addEventListener('click', function (event) {
         // Use closest to find the nearest .chat_container ancestor
         const chatContainerInner = event.target.closest('.chat_container');
         if (!chatContainerInner) return;  // Exit if no .chat_container is found
@@ -168,15 +164,21 @@ function chatEventListeners() {
             dropdownMenu(targetElement);
         }
 
-        const messageElement = event.target.closest('li[data-message_id]');
-        if (messageElement) {
-            const messageID = messageElement.getAttribute('data-message_id');
-
-            handleMessageClick(messageID);
-        }
+        // Close any open context menus first
+        // closeAllContextMenus();
     });
 
-    chatContainer.addEventListener('submit', function (event) {
+    // selectors.chatsContainer.addEventListener("contextmenu", function (event) {
+    //     event.preventDefault();
+    //     const messageElement = event.target.closest('li[data-message_id]');
+    //     if (messageElement) {
+    //         handleMessageClick(messageElement);
+    //     } else {
+    //         closeAllContextMenus();
+    //     }
+    // });
+
+    selectors.chatsContainer.addEventListener('submit', function (event) {
         // Check if the event target is a form with the class 'message_form'
         if (event.target.matches(".message_form")) {
             event.preventDefault(); // Prevent the default form submission behavior
@@ -186,7 +188,7 @@ function chatEventListeners() {
         }
     });
 
-    chatContainer.addEventListener('input', function (event) {
+    selectors.chatsContainer.addEventListener('input', function (event) {
         // Check if the event target is a form with the class 'message_form'
         if (event.target.matches('[name="send_message"]')) {
 
@@ -194,27 +196,13 @@ function chatEventListeners() {
         }
     });
 
-    chatContainer.addEventListener('focusout', function (event) {
+    selectors.chatsContainer.addEventListener('focusout', function (event) {
         // Check if the event target is an input with the name 'send_message'
         if (event.target.matches('[name="send_message"]')) {
 
             handleMessageOnBlur(event.target);
         }
     });
-
-    // // Add an event listener to the chat container for delegation
-    // chatContainer.addEventListener('click', function (event) {
-    //     // Use closest to find the nearest message element with the desired attribute
-    //     const messageElement = event.target.closest('li[data-message_id]');
-
-    //     if (messageElement) {
-    //         // Retrieve the data-message_id attribute
-    //         const messageID = messageElement.getAttribute('data-message_id');
-
-    //         // Call your function to handle the message click
-    //         handleMessageClick(messageID);
-    //     }
-    // });
 }
 
 function conversationsItem(chatData, profileName) {
@@ -299,7 +287,7 @@ function handleTypingStopOnSubmit(chatContainer, type, conversationID) {
 
 // Function to handle conversation item on click
 function handleConversationButtons(currentButton) {
-    const conversationsButton = conversationList.querySelectorAll('.conversation_btn');
+    const conversationsButton = selectors.conversationList.querySelectorAll('.conversation_btn');
 
     // Deactivate all buttons
     conversationsButton.forEach(e => e.classList.remove('active'));
@@ -307,7 +295,7 @@ function handleConversationButtons(currentButton) {
     // Activate the clicked button
     currentButton.classList.add('active');
 
-    chatContainer.setAttribute("data-state", innerWidth < 768 ? "open" : "closing");
+    selectors.chatsContainer.setAttribute("data-state", innerWidth < 768 ? "open" : "closing");
 
     // Check if the clicked currentButton is a group chat
     const isGroup = currentButton.classList.contains('group');
@@ -349,8 +337,96 @@ function onSeenClickItemLogic(currentButton) {
 }
 
 // Define the function to handle message clicks
-function handleMessageClick(messageID) {
-    // Your logic to handle the message click event
-    console.log(`Handling message with ID: ${messageID}`);
-    // Example: highlight the message or open a context menu
+function handleMessageClick(messageElement) {
+    // Determine if the message is from the sender or recipient
+    const isSender = messageElement.classList.contains('sender');
+    const messageID = messageElement.getAttribute('data-message_id');
+
+    // Check if the context menu is already open
+    if (!messageElement.classList.contains('contextmenu_open')) {
+        // Close any open context menus first
+        closeAllContextMenus();
+
+        if (isSender) {
+            // Logic for opening the menu for sender
+            console.log(`Opening sender menu for message with ID: ${messageID}`);
+            // Add the contextmenu_open class
+            messageElement.classList.add('contextmenu_open');
+
+            senderContexmenu(messageElement);
+        } else if (messageElement.classList.contains('recipient')) {
+            // Logic for opening the menu for recipient
+            console.log(`Opening recipient menu for message with ID: ${messageID}`);
+            // Add the contextmenu_open class
+            messageElement.classList.add('contextmenu_open');
+
+            recipientContexmenu(messageElement);
+        }
+    } else {
+        console.log(`Menu already open for message with ID: ${messageID}`);
+    }
+}
+
+// Function to close all open context menus
+function closeAllContextMenus() {
+    // Find all elements with the contextmenu_open class and remove it
+    document.querySelectorAll('.contextmenu_open').forEach((element) => {
+        element.classList.remove('contextmenu_open');
+        element.querySelector('.message_contextmenu').remove();
+    });
+}
+
+function senderContexmenu(selectorElement) {
+    const contextmenuHTML = `
+        <div class="message_contextmenu">
+            <ul class="message_contextmenu_list" data-position="right">
+                <li class="message_contextmenu_list_item">
+                    <button type="button" class="btn_btn" aria-label="">Reply</button>
+                </li>
+                <li class="message_contextmenu_list_item">
+                    <button type="button" class="btn_btn" aria-label="">Forward</button>
+                </li>
+                <li class="message_contextmenu_list_item">
+                    <button type="button" class="btn_btn" aria-label="">Copy</button>
+                </li>
+                <li class="message_contextmenu_list_item">
+                    <button type="button" class="btn_btn" aria-label="">View</button>
+                </li>
+                <li class="message_contextmenu_list_item">
+                    <button type="button" class="btn_btn" aria-label="">Edit</button>
+                </li>
+                <li class="message_contextmenu_list_item">
+                    <button type="button" class="btn_btn" aria-label="">Delete</button>
+                </li>
+            </ul>
+        </div>
+        `;
+
+    selectorElement.insertAdjacentHTML("beforeend", contextmenuHTML);
+}
+
+function recipientContexmenu(selectorElement) {
+    const contextmenuHTML = `
+        <div class="message_contextmenu">
+            <ul class="message_contextmenu_list">
+                <li class="message_contextmenu_list_item">
+                    <button type="button" class="btn_btn" aria-label="">Reply</button>
+                </li>
+                <li class="message_contextmenu_list_item">
+                    <button type="button" class="btn_btn" aria-label="">Forward</button>
+                </li>
+                <li class="message_contextmenu_list_item">
+                    <button type="button" class="btn_btn" aria-label="">Copy</button>
+                </li>
+                <li class="message_contextmenu_list_item">
+                    <button type="button" class="btn_btn" aria-label="">View</button>
+                </li>
+                <li class="message_contextmenu_list_item">
+                    <button type="button" class="btn_btn" aria-label="">Delete</button>
+                </li>
+            </ul>
+        </div>
+        `;
+
+    selectorElement.insertAdjacentHTML("beforeend", contextmenuHTML);
 }

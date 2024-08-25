@@ -4,6 +4,8 @@ import { db2Connection } from '../db.js';
 const profileSchema = new mongoose.Schema({
     userID: {
         type: mongoose.Schema.Types.ObjectId,
+        unique: true,
+        required: true,
         ref: 'User'
     },
     profileName: {

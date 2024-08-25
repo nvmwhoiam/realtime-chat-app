@@ -327,7 +327,7 @@ export function createChatContainerGroup(chatData) {
                                             </div>
                                         </li>
                                         `).join('')}
-
+                                        
                             </ul>
 
                         </div>

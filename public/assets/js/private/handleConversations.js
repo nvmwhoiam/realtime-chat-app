@@ -19,7 +19,7 @@ const handleConversations = (socket) => {
     let searchTimeout;
 
     searchProfileToRequestPrivateConversation.addEventListener('input', function () {
-        const value = searchProfileToRequestPrivateConversation.value.trim();
+        const searchValue = searchProfileToRequestPrivateConversation.value.trim();
 
         // Clear previous search results
         searchPrivateConversationToCreateResults.innerHTML = '';
@@ -28,9 +28,9 @@ const handleConversations = (socket) => {
         clearTimeout(searchTimeout);
 
         searchTimeout = setTimeout(() => {
-            if (value) {
+            if (searchValue) {
                 // If it gets to here means that the profile is online and sends a feedback that the message is delivered
-                socket.emit('searchProfileToRequestPrivateConversation', value);
+                socket.emit('searchProfileToRequestPrivateConversation', searchValue);
             }
 
         }, 300); // Adjust debounce delay as needed
@@ -107,7 +107,7 @@ const handleConversations = (socket) => {
                 </div>
 
                 <div class="buttons_container">
-                    <button type="button" class="btn_icon${profile.requestStatus === 'pending' ? " active" : ''}" data-conversation="requestCancel">
+                    <button type="button" class="btn_icon${profile.requestStatus === 'pending' ? " active" : ''}" data-private-conversation="requestCancel">
                     <i class="icon_plus-solid"></i>
                 </button>
                 </div>
@@ -119,7 +119,7 @@ const handleConversations = (socket) => {
 
     searchPrivateConversationToCreateResults.addEventListener('click', function (event) {
         // Use closest to find the nearest .conversation ancestor
-        const requestCancel = event.target.closest('[data-conversation="requestCancel"]');
+        const requestCancel = event.target.closest('[data-private-conversation="requestCancel"]');
 
         if (requestCancel) {
             handleRequestCancelConversationLogic(requestCancel);
@@ -156,12 +156,12 @@ const handleConversations = (socket) => {
 
                 <div class="buttons_container">
                     <button type="button" class="btn_icon"
-                        data-conversation="request_accept">
+                        data-private-conversation="request_accept">
                         <i class="icon_check-solid"></i>
                     </button>
 
                     <button type="button" class="btn_icon"
-                        data-conversation="request_reject">
+                        data-private-conversation="request_reject">
                         <i class="icon_xmark-solid"></i>
                     </button>
                 </div>
@@ -172,8 +172,8 @@ const handleConversations = (socket) => {
     }
 
     conversationRequestElement.addEventListener('click', function (event) {
-        const acceptRequest = event.target.closest('[data-conversation="request_accept"]');
-        const rejectRequest = event.target.closest('[data-conversation="request_reject"]');
+        const acceptRequest = event.target.closest('[data-private-conversation="request_accept"]');
+        const rejectRequest = event.target.closest('[data-private-conversation="request_reject"]');
 
         if (acceptRequest) {
             handleOnRequestAccepted(acceptRequest);

@@ -61,7 +61,6 @@ const socketRouter = async (io) => {
             fetchUserData();
         });
 
-
         // // Accessing the cookies from the headers
         // const cookieHeader = socket.request.headers.cookie;
 
@@ -422,7 +421,6 @@ const socketRouter = async (io) => {
 
             return Array.from(recipientSocketIDs);
         }
-
     });
 };
 

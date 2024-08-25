@@ -50,7 +50,7 @@
 
                     <div class="user_container_wrapper_header">
                         <h1 class="app_name">
-                            <a href="" hreflang="" aria-label="App name">example.com</a>
+                            <a href="" hreflang="" aria-label="App name">ChatQik.com</a>
                         </h1>
 
                         <div class="buttons_flex">
@@ -292,11 +292,20 @@
                                     name="search_group_conversation_to_create">
                             </div>
 
-                            <div class="user_container_modal_body">
+                            <div class="user_container_modal_body conversation_create_group_step_1">
 
                                 <ul data-list="group_conversation_request_search_results"> </ul>
 
-                                <ul class="group_request_conversation_list"> </ul>
+                                <ul class="group_request_conversation_list" data-list="group_request_conversation_list">
+                                    <!-- <li class="group_request_conversation_list_item"
+                                        data-profileName="${profileData.profileName}">
+                                        <img src="../uploads/userAvatars/user.svg">
+
+                                        <button type="button" class="btn_icon btn_close" aria-label="">
+                                            <i class="icon_xmark-solid"></i>
+                                        </button>
+                                    </li> -->
+                                </ul>
                             </div>
 
                             <div class="user_container_modal_footer">
@@ -569,8 +578,6 @@
                         </header>
 
                         <ul class="chat_messages">
-                            <div class="sticky_header"><span>Yesterday</span></div>
-
                             <li class="day_divider"><span>Today</span></li>
 
                             <li class="sender" data-message_status="delivered"
@@ -580,10 +587,8 @@
                                         <p class="message_text">
                                             Lorem <a href="" target="_blank" hreflang="">aqw123</a> dolor sit amet
                                             consectetur adipisicing elit. Ratione repellat voluptatem necessitatibus
-                                            repellendus illum expedita aliquid assumenda dolorem iure, molestias
-                                            dolor
-                                            adipisci quibusdam accusantium modi facilis voluptates dolore
-                                            repudiandae
+                                            repellendus illum expedita aliquid assumenda dolorem iure, molestias dolor
+                                            adipisci quibusdam accusantium modi facilis voluptates dolore repudiandae
                                             <span class="profile_tag">@aqw123</span> inventore?
                                         </p>
                                     </div>
@@ -629,8 +634,7 @@
                                         <p class="message_text">Lorem ipsum dolor sit amet consectetur adipisicing
                                             elit. Blanditiis dolorem iste sed nesciunt ullam perferendis alias saepe
                                             illum, similique dolore aliquam quam error nemo, voluptatum nostrum
-                                            animi
-                                            illo. Iure, deleniti.
+                                            animi illo. Iure, deleniti.
                                         </p>
                                     </div>
                                     <div class="message_footer">
@@ -676,9 +680,8 @@
                                         <p class="message_text">
                                             Lorem ipsum dolor sit amet consectetur adipisicing elit.
                                             Blanditiis dolorem iste sed nesciunt ullam perferendis alias saepe
-                                            illum,
-                                            similique dolore aliquam quam error nemo, voluptatum nostrum animi illo.
-                                            Iure, deleniti.
+                                            illum, similique dolore aliquam quam error nemo, voluptatum nostrum animi
+                                            illo. Iure, deleniti.
                                         </p>
                                     </div>
 
@@ -966,7 +969,7 @@
         </div>
     </main>
 
-    <!-- <div class="video_call" data-conversation_id="49d4529c060cdf4515d93cd97e2bdd7d" data-mode="videoMode">
+    <!-- <div class="video_call" data-conversation_id="49d4529c060cdf4515d93cd97e2bdd7d" data-mode="dialMode">
 
         <div class="video_call_container">
 
@@ -1089,7 +1092,6 @@
     </div> -->
 
     <script type="module" src="./assets/js/index.js"></script>
-    <!-- <script type="module" src="./assets/js/script.js"></script> -->
     <script type="module" src="./assets/js/main.js"></script>
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"
         integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO"

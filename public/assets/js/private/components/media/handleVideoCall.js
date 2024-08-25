@@ -52,7 +52,7 @@ function setVideoMode() {
         parentElement.setAttribute('data-mode', 'videoMode');
     }
 
-    requestVideoStream();
+    // requestVideoStream();
 }
 
 // camera.js

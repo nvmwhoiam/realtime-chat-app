@@ -23,7 +23,7 @@ const handleConversations = (socket) => {
 
     const searchProfileToRequestGroupConversation = document.querySelector('[name="search_group_conversation_to_create"]');
     const searchGroupConversationToCreateResults = document.querySelector('[data-list="group_conversation_request_search_results"]');
-    const groupRequestConversationList = document.querySelector('.group_request_conversation_list');
+    const groupRequestConversationList = document.querySelector('[data-list="group_request_conversation_list"]');
 
     const conversationRequestElement = document.querySelector('[data-list="pending_conversations"]');
 
@@ -146,7 +146,7 @@ const handleConversations = (socket) => {
                 </div>
 
                 <div class="buttons_container">
-                    <button type="button" class="btn_icon ${profile.requestStatus === 'pending' ? " active" : ''}" data-conversation="inviteCancel">
+                    <button type="button" class="btn_icon ${profile.requestStatus === 'pending' ? " active" : ''}" data-group-conversation="inviteCancel">
                     <i class="icon_plus-solid"></i>
                 </button>
                 </div>
@@ -158,7 +158,7 @@ const handleConversations = (socket) => {
 
     searchGroupConversationToCreateResults.addEventListener('click', function (event) {
         // Use closest to find the nearest .conversation ancestor
-        const inviteCancel = event.target.closest('[data-conversation="inviteCancel"]');
+        const inviteCancel = event.target.closest('[data-group-conversation="inviteCancel"]');
 
         if (inviteCancel) {
             handleGroupConversationLogic(inviteCancel);
@@ -222,12 +222,12 @@ const handleConversations = (socket) => {
 
                 <div class="buttons_container">
                     <button type="button" class="btn_icon"
-                        data-conversation="request_accept">
+                        data-group-conversation="request_accept">
                         <i class="icon_check-solid"></i>
                     </button>
 
                     <button type="button" class="btn_icon"
-                        data-conversation="request_reject">
+                        data-group-conversation="request_reject">
                         <i class="icon_xmark-solid"></i>
                     </button>
                 </div>
@@ -238,8 +238,8 @@ const handleConversations = (socket) => {
     }
 
     conversationRequestElement.addEventListener('click', function (event) {
-        const acceptRequest = event.target.closest('[data-conversation="request_accept"]');
-        const rejectRequest = event.target.closest('[data-conversation="request_reject"]');
+        const acceptRequest = event.target.closest('[data-group-conversation="request_accept"]');
+        const rejectRequest = event.target.closest('[data-group-conversation="request_reject"]');
 
         if (acceptRequest) {
             handleOnRequestAccepted(acceptRequest);

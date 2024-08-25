@@ -1,7 +1,7 @@
 {
-    "name": "Personal WebSite for sharing experience",
-    "short_name": "Love to share",
-    "description": "Just learning new stuff about web programing and looking to share my experience with like minded people.",
+    "name": "Chatterly",
+    "short_name": "Chatly",
+    "description": "Chatterly is a sleek and intuitive chat app designed for seamless communication. With real-time messaging, voice, and video calls, it allows users to connect effortlessly across devices. Enhanced with smart notifications and customizable themes, Chatterly ensures a personalized experience for every conversation. The app's secure encryption keeps your chats private, while its minimalistic design focuses on what matters most—staying connected. Perfect for both personal and professional use, Chatterly makes communication simple, fast, and fun.",
     "lang": "en-GB",
     "start_url": "./index.html",
     "icons": [

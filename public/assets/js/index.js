@@ -6,7 +6,7 @@ const searchProfileToRequestPrivateConversation = document.querySelector('[name=
 const searchPrivateConversationToCreateResults = document.querySelector('[data-conversation="request_search_results"]');
 
 const searchProfileToRequestGroupConversation = document.querySelector('[name="search_group_conversation_to_create"]');
-const searchGroupConversationToCreateResults = document.querySelector('[data-group-conversation="search_group_conversation_to_create_results"]');
+const searchGroupConversationToCreateResults = document.querySelector('[data-list="group_conversation_request_search_results"]');
 
 const modalBtns = document.querySelectorAll('[data-modal_btn]');
 const modalMenuBtns = document.querySelectorAll('[data-modal_menu_btn]');
@@ -20,10 +20,10 @@ const searchToggleBtn = document.querySelectorAll('[data-btn="search_in_conversa
 
 searchInConversation.addEventListener('input', function () {
     const searchTerm = this.value.toLowerCase();
-    const profileNames = document.querySelectorAll('.conversation_btn .profile_name');
-
-    profileNames.forEach(function (profileNameElement) {
+    const profileNames = document.querySelectorAll('.conversation_btn .content_name');
+    profileNames.forEach(profileNameElement => {
         const profileName = profileNameElement.innerText.toLowerCase();
+
         if (profileName.includes(searchTerm)) {
             profileNameElement.closest('.conversation_btn').style.display = '';
         } else {
@@ -130,4 +130,15 @@ tabButtons.forEach(eachBtn => {
 
         setClosedToOpen(targetTab);
     });
-})
+});
+
+// if ('serviceWorker' in navigator) {
+
+//     navigator.serviceWorker.register('sw.js').then(function (registration) {
+//         // Registration was successful
+//         console.log('ServiceWorker registration successful with scope: ', registration.scope);
+//     }, function (err) {
+//         // registration failed :(
+//         console.log('ServiceWorker registration failed: ', err);
+//     });
+// }

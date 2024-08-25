@@ -44,9 +44,6 @@ const privateConversationHandle = (socket) => {
             }
         }
 
-        // // Call stickyHeaderDividerCreate after processing messages
-        // stickyHeaderDividerCreate(messages[0].conversationID);
-
         handleUnreadMessages();
         observeMessages(socket);
     });

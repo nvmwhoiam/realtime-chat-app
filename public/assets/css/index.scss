@@ -49,6 +49,40 @@
     }
 }
 
+@mixin animateWidth($width) {
+    &[data-state="closed"] {
+        display: none;
+    }
+
+    &[data-state="open"] {
+        animation: grower var(--animation-speed) forwards;
+    }
+
+    &[data-state="closing"] {
+        animation: lower var(--animation-speed) forwards;
+    }
+
+    @keyframes grower {
+        0% {
+            width: 0;
+        }
+
+        100% {
+            width: $width;
+        }
+    }
+
+    @keyframes lower {
+        100% {
+            width: 0;
+        }
+
+        0% {
+            width: $width;
+        }
+    }
+}
+
 main {
     width: 100%;
     height: 100%;
@@ -62,6 +96,7 @@ main {
 
             .user_container_wrapper {
                 &_header {
+                    background-color: var(--background-color-secondary);
                     padding: var(--sm-p);
                     @include Dflex(space-between);
                     position: relative;
@@ -85,7 +120,7 @@ main {
                         padding: var(--sm-p);
                         border-top-left-radius: var(--border-radius-light);
                         border-top-right-radius: var(--border-radius-light);
-                        background-color: var(--background-color);
+                        background-color: var(--background-color-secondary);
                         @include position(absolute, $top: 0, $left: 0);
                         @include dataStateFade();
 
@@ -107,13 +142,13 @@ main {
                     .tab_content {
                         width: 100%;
                         height: 100%;
-                        padding: var(--sm-p);
                         @include position(absolute, $top: 0);
                         @include dataStateFadeColumn();
                     }
                 }
 
                 &_footer {
+                    background-color: var(--background-color-secondary);
                     padding: var(--sm-p);
 
                     .profile_nav_list {
@@ -129,6 +164,19 @@ main {
 
                     }
                 }
+
+                // @media only screen and (max-width: 768px) {}
+
+                @media only screen and (min-width: 768px) {
+                    &_header {
+                        border-top-left-radius: var(--border-radius-light);
+                    }
+
+                    &_footer {
+                        border-bottom-left-radius: var(--border-radius-light);
+                    }
+                }
+
             }
 
             .user_container_modal {
@@ -167,6 +215,39 @@ main {
                 &_body {
                     padding: var(--sm-p);
 
+                    &.conversation_create_group_step_1 {
+
+                        .group_request_conversation_list {
+                            display: flex;
+                            flex-direction: row;
+                            justify-content: center;
+                            min-height: 64px;
+                            gap: var(--sm-p);
+                            flex-wrap: wrap;
+                            padding: var(--sm-p);
+
+                            &_item {
+                                width: 48px;
+                                height: 48px;
+                                position: relative;
+
+                                img {
+                                    border-radius: 50%;
+                                }
+
+                                .btn_close {
+                                    @include position(absolute, $top: 0);
+                                    border-radius: 50%;
+                                    background-color: var(--low-opacity);
+
+                                    i {
+                                        color: red;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
                     // &_list {
                     //     display: flex;
                     //     flex-direction: column;
@@ -179,23 +260,6 @@ main {
                     //         }
                     //     }
                     // }
-
-                    .group_request_conversation_list {
-                        min-height: 64px;
-                        display: flex;
-                        gap: var(--sm-p);
-                        flex-wrap: wrap;
-                        padding: var(--sm-p);
-
-                        &_item {
-                            width: 48px;
-                            height: 48px;
-
-                            img {
-                                border-radius: 50%;
-                            }
-                        }
-                    }
 
                     .inputs_container {
                         textarea {
@@ -245,6 +309,7 @@ main {
 
         .chats_container {
             flex: 1;
+            overflow-x: hidden;
 
             .chat_container {
                 animation: FadeIn var(--animation-speed) forwards;
@@ -406,6 +471,7 @@ main {
 
                             .message_content {
                                 .message_body {
+
                                     .img_container {
                                         margin-left: auto;
 
@@ -451,7 +517,7 @@ main {
                 }
 
                 .chat_side_panel {
-                    @include dataStateSlide();
+                    // @include dataStateSlide();
 
                     .container {
                         height: 100%;
@@ -575,7 +641,6 @@ main {
                 }
             }
         }
-
     }
 
     @media only screen and (max-width: 768px) {
@@ -598,19 +663,7 @@ main {
                     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
                     backdrop-filter: blur(10px);
                     z-index: 1;
-
-                    &[data-state="closed"] {
-                        display: none;
-                    }
-
-                    &[data-state="open"] {
-                        display: flex;
-                        animation: RightToLeft var(--animation-speed) forwards;
-                    }
-
-                    &[data-state="closing"] {
-                        animation: LeftToRight var(--animation-speed) forwards;
-                    }
+                    @include dataStateFade();
 
                     .chat_container {
                         width: 100%;
@@ -624,6 +677,7 @@ main {
                             @include position(fixed, $top: 0, $left: 0);
                             background-color: var(--background-color);
                             z-index: 1;
+                            @include dataStateFadeColumn();
                         }
                     }
 
@@ -687,14 +741,18 @@ main {
                             border-bottom-right-radius: var(--border-radius-light);
                             border-left: 1px solid var(--border-color);
                             flex-shrink: 0;
-
-                            // .panel_header {
-                            //     display: none
-                            // }
+                            @include animateWidth(300px);
 
                             .container {
+                                &_main {
+                                    .panel_header {
+                                        display: none
+                                    }
+                                }
+
                                 .panel_body {
-                                    height: calc(600px - 64px);
+                                    // height: calc(600px - 64px);
+                                    height: 598px;
                                     overflow-y: auto;
                                     @include hideScroll();
                                 }
@@ -824,20 +882,6 @@ main {
         grid-template-columns: repeat(5, 22px);
         flex-wrap: wrap;
         gap: var(--sm-p);
-    }
-}
-
-.btn_icon {
-    i {
-        transition: color var(--animation-speed);
-
-        &:not(:visited) {
-
-            &:hover,
-            &:focus {
-                color: var(--border-color);
-            }
-        }
     }
 }
 
@@ -1298,13 +1342,17 @@ button {
             background-color: yellow;
         }
     }
+
+    img {
+        border-radius: 50%;
+        @include bckimgCenter;
+    }
 }
 
 [data-list] {
     display: flex;
     flex-direction: column;
     gap: var(--sm-p);
-    // padding: var(--sm-p);
     overflow-y: auto;
     @include hideScroll();
 
@@ -1316,6 +1364,7 @@ button {
     .profile_element {
         display: flex;
         gap: var(--sm-p);
+        padding: var(--sm-p);
 
         .avatar_container {
             width: 48px;

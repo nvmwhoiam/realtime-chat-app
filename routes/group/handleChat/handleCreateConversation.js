@@ -55,8 +55,11 @@ const handleCreateConversation = async (io, socket) => {
             await newGroupConversationSchema.save();
 
             const groupConversationSchema = await groupConversationModel.findById(newGroupConversationSchema._id)
-                .select('-_id conversationID createdBy admin moderator members isPrivate groupName groupAvatar groupDescription lastMessageData');
-
+                .select('-_id conversationID createdBy admin moderator members isPrivate groupName groupAvatar groupDescription lastMessageData')
+                .populate({
+                    path: 'createdBy admin moderator members',
+                    select: 'profileName profileAvatar'
+                });
             // Handle room joining for group conversations
             const conversationID = newGroupConversationSchema.conversationID;
 

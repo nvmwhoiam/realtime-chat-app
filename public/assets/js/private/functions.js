@@ -6,11 +6,7 @@ import {
     messageStatusFunction
 } from "../functions.js";
 
-// conversationsItem list elements
-const conversationList = document.querySelector('[data-list="conversations"]');
-
-// Chat container elements
-const chatContainer = document.querySelector(".chats_container");
+import selectors from '../utils/selectors.js';
 
 export function sendMessage(messageData, isNew = false) {
     const chatMessageHTML = `
@@ -111,7 +107,7 @@ export function createUserItem(userData, chatData) {
         </li>
         `;
 
-    conversationList.insertAdjacentHTML("beforeend", conversationHTML);
+    selectors.conversationList.insertAdjacentHTML("beforeend", conversationHTML);
 }
 
 // Create a template for the chat container
@@ -256,7 +252,7 @@ export function createChatContainer(userData, chatData) {
         </section>
         `;
 
-    chatContainer.insertAdjacentHTML("beforeend", chatContainerHTML);
+    selectors.chatsContainer.insertAdjacentHTML("beforeend", chatContainerHTML);
 }
 
 export function ifActiveSetMessageStatusDelivered(messageID, conversationID) {
