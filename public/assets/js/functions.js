@@ -13,6 +13,8 @@ pendingCounts.set('conversationPending', 0);
 
 const conversationList = document.querySelector('[data-conversation="list"]');
 
+import selectors from './utils/selectors.js';
+
 export function observeMessages(socket) {
     // Find the currently active chat container and deactivate it
     const activeChat = document.querySelector(".chat_container.active");
@@ -182,7 +184,7 @@ export function insertSenderLogic(messageData, chatMessageHTML, isNew) {
         const conversationContainer = document.querySelector(`[data-conversation_id='${messageData.conversationID}']`);
         const conversationListItem = conversationContainer.closest('.conversation_list_item');
 
-        if (!isFirstChild(conversationList, conversationListItem)) {
+        if (!isFirstChild(selectors.conversationList, conversationListItem)) {
             moveToTop(conversationList, conversationListItem);
         }
 
@@ -213,33 +215,55 @@ export function insertRecipientLogic(messageData, chatMessageHTML, isNew) {
 
     // Handle if it is a fetched or a new message
     if (isNew) {
-        const conversationContainer = document.querySelector(`[data-conversation_id='${messageData.conversationID}']`);
-        const conversationListItem = conversationContainer.closest('.conversation_list_item');
+        const conversationButton = document.querySelector(`[data-conversation_id='${messageData.conversationID}']`);
+        const conversationListItem = conversationButton.closest('.conversation_list_item');
 
-        if (!isFirstChild(conversationList, conversationListItem)) {
+        if (!isFirstChild(selectors.conversationList, conversationListItem)) {
             moveToTop(conversationList, conversationListItem);
         }
 
-        if (conversationContainer) {
-            const timeSelector = conversationContainer.querySelector(".time_container time");
+        if (conversationButton) {
+            conversationButton.querySelector(".message_body").classList.remove('active');
+            conversationButton.querySelector(".message_text").innerText = `${messageData.senderData.profileName}: ${messageData.content}`;
 
-            conversationContainer.querySelector(".message_body").classList.remove('active');
-            conversationContainer.querySelector(".message_text").innerText = `${messageData.senderData.profileName}: ${messageData.content}`;
+            const timeSelector = conversationButton.querySelector(".time_container time");
             timeSelector.setAttribute('datetime', messageData.createdAt);
             timeSelector.innerText = hourMinuteDateFormat(messageData.createdAt);
         }
 
         // Handle if the chat container is not open
         if (!isActive) {
-            if (!conversationContainer.classList.contains("not_seen")) {
-                conversationContainer.classList.add("not_seen");
+
+            // Check if the conversation is seen (i.e., 'data-isSeen' is 'true')
+            const isSeen = conversationButton.getAttribute('data-isSeen') === 'true';
+            // Find the notification badge container
+            const statusContainer = conversationButton.querySelector('.status_container');
+
+            if (isSeen) {
+                // If it was seen, mark it as not seen (false)
+                conversationButton.setAttribute('data-isSeen', 'false');
+
+                // If the badge doesn't exist, create it
+                const createSpan = document.createElement("span");
+                createSpan.classList.add('not_badge');
+
+                const createI = document.createElement("i");
+                createI.classList.add('not_seen_times');
+                createI.innerText = '1'; // Initialize with 1 since it's the first unseen notification
+
+                createSpan.appendChild(createI);
+                statusContainer.appendChild(createSpan);
+            } else {
+                // If the badge already exists, increment the counter
+                const notSeenTimes = statusContainer.querySelector('.not_seen_times');
+                let counterValue = parseInt(notSeenTimes.innerText, 10);
+                if (isNaN(counterValue)) {
+                    counterValue = 0; // Ensure counter starts at 0 if parsing fails
+                }
+                counterValue++;
+                notSeenTimes.innerText = counterValue;
             }
 
-            const counterEl = conversationContainer.querySelector(".not_badge .not_seen_times");
-            let counterValue = parseInt(counterEl.innerText, 10);
-            counterValue++;
-            counterEl.innerText = counterValue;
-            // document.title = `Message (${counterValue})`;
         }
     }
 }
@@ -445,6 +469,20 @@ export function dropdownMenu(selector) {
 }
 
 export function closeChat() {
+    // Find the currently active button
+    const activeConversationBtn = document.querySelector('.conversation_btn.active');
+
+    // Find the currently active chat container
+    const activeConversationChat = document.querySelector('.chat_container.active');
+
+    if (activeConversationBtn) {
+        activeConversationBtn.classList.remove('active');
+    }
+
+    if (activeConversationChat) {
+        activeConversationChat.classList.remove('active');
+    }
+
     //Check if Modal is active if it is then close it before opens another window
     if (document.querySelector(".chats_container").getAttribute("data-state") === "open") {
 

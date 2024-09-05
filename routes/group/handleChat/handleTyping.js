@@ -9,7 +9,7 @@ const handleTyping = async (io, socket) => {
 
             if (socket.rooms.has(conversationID)) {
                 // conversationID is a room, send the message to the room
-                socket.to(conversationID).emit("typingStartGroupIndicator", conversationID, currentUser);
+                socket.to(conversationID).emit("typingStartGroupFeedback", conversationID, currentUser);
             }
         } catch (error) {
             console.error("Error typingStart:", error);
@@ -24,7 +24,7 @@ const handleTyping = async (io, socket) => {
 
             if (socket.rooms.has(conversationID)) {
                 // conversationID is a room, send the message to the room
-                socket.to(conversationID).emit("typingStopGroupIndicator", conversationID, currentUser);
+                socket.to(conversationID).emit("typingStopGroupFeedback", conversationID, currentUser);
             }
         } catch (error) {
             console.error("Error typingStop:", error);

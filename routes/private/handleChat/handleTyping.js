@@ -13,7 +13,7 @@ const handleTyping = async (io, socket) => {
             if (recipientSocketID) {
                 recipientSocketID.map(eachSocketID => {
                     // RecipientId is a room, send the message to the room
-                    io.to(eachSocketID).emit("typingStartPrivateIndicator", conversationID, currentUser);
+                    io.to(eachSocketID).emit("typingStartPrivateFeedback", conversationID, currentUser);
                 });
             }
         } catch (error) {
@@ -32,7 +32,7 @@ const handleTyping = async (io, socket) => {
             if (recipientSocketID) {
                 recipientSocketID.map(eachSocketID => {
                     // RecipientId is a room, send the message to the room
-                    io.to(eachSocketID).emit("typingStopPrivateIndicator", conversationID, currentUser);
+                    io.to(eachSocketID).emit("typingStopPrivateFeedback", conversationID, currentUser);
                 });
             }
         } catch (error) {

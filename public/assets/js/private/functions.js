@@ -65,25 +65,25 @@ export function createUserItem(userData, chatData) {
 
     const conversationHTML = `
         <li class="conversation_list_item">
-            <button type="button" class="conversation_btn profile_element" data-conversation_id="${chatData.conversationID}">
+            <button type="button" class="conversation_btn profile_element" data-isSeen='true' data-conversation_id="${chatData.conversationID}">
 
                 <div class="avatar_container profile_image">
                     <img src="../uploads/userAvatars/${userData.profileAvatar}" alt="Profile avatar"
                         aria-label="Profile avatar">
                         <span class="profile_status" data-profile="${userData.profileName}"
-                            data-status="offline"></span>
+                            data-status="offline">
+                        </span>
                 </div>
 
                 <div class="content_container">
 
                     <b class="content_name" data-profile="profileName">${userData.profileName}</b>
 
-                    <div class="message_body">
+                    <div class="message_body" data-isTyping='false'>
 
                         <p class="message_text">
                             ${senderName} ${lastMessageContent}
                         </p>
-                        <p class="chat_typing"></p>
                     </div>
 
                 </div>
@@ -96,9 +96,6 @@ export function createUserItem(userData, chatData) {
 
                     <div class="status_container">
                         ${messageStatus}
-                        <span class="not_badge">
-                            <i class="not_seen_times">0</i>
-                        </span>
                     </div>
 
                 </div>
@@ -147,7 +144,7 @@ export function createChatContainer(userData, chatData) {
                     <button type="button" class="btn_icon">
                         <i class="icon_microphone-solid"></i>
                     </button>
-                    <input type="text" placeholder="Type something..." rows="1" name="send_message">
+                    <input type="text" placeholder="Type something..." rows="1" data-isTyping="false" name="send_message">
                         <div class="dropdown">
                             <button type="button" class="btn_icon icon_dropdown" data-btn="attach">
                                 <i class="icon_paperclip-solid"></i>
@@ -195,54 +192,274 @@ export function createChatContainer(userData, chatData) {
                 </form>
             </section>
 
-            <aside class="chat_side_panel" data-state="closed">
+            <aside class="chat_side_panel" data-modal_container="side_panel_modal" data-state="closed">
 
-                <header class="panel_header">
-                    <button type="button" class="btn_icon" data-btn="side_bar_toggle" aria-label="" aria-controls="">
-                        <i class="icon_xmark-solid"></i>
-                    </button>
+                <div class="container">
 
-                    <h2>Side Panel</h2>
-                </header>
+                    <div class="container_main" data-sidebar_menu_container="side_panel_menu" data-state="open">
 
-                <div class="panel_body">
+                        <header class="panel_header">
+                            <button type="button" class="btn_icon" data-modal_btn="side_panel_modal"
+                                aria-label="" aria-controls="">
+                                <i class="icon_xmark-solid"></i>
+                            </button>
 
-                    <div class="panel_body_header">
+                            <h2>Side Panel</h2>
+                        </header>
 
-                        <div class="profile_container">
-                            <div class="profile_avatar">
-                                <img src="../uploads/userAvatars/user.svg">
-                                    <span class="profile_status"></span>
+                        <div class="panel_body">
+                            <div class="panel_body_header">
+
+                                <div class="profile_container">
+                                    <div class="profile_avatar_wrapper">
+                                        <img src="../uploads/userAvatars/user.svg">
+                                            <span class="profile_status"></span>
+                                    </div>
+                                </div>
+
+                                <div class="profile_name">
+                                    Seid Ali
+                                </div>
+
+                                <p class="group_description">
+                                    Lorem ipsum dolor, sit amet consectetur adipisicing elit.
+                                </p>
                             </div>
+
+                            <div class="buttons_container">
+                                <ul class="action_buttons">
+                                    <li class="action_button">
+                                        <button type="button" class="btn_icon" aria-label="">
+                                            <i class="icon_check-solid"></i>
+                                        </button>
+
+                                        <small class="btn_title">Leave</small>
+                                    </li>
+
+                                    <li class="action_button">
+                                        <button type="button" class="btn_icon" aria-label="">
+                                            <i class="icon_bell-regular"></i>
+                                        </button>
+
+                                        <small class="btn_title">Mute</small>
+                                    </li>
+
+                                    <li class="action_button">
+                                        <button type="button" class="btn_icon" aria-label="">
+                                            <i class="icon_magnifying-glass-solid"></i>
+                                        </button>
+
+                                        <small class="btn_title">Search</small>
+                                    </li>
+
+                                </ul>
+
+                                <ul class="navigation_list">
+
+                                    <li class="navigation_list_item">
+                                        <button type="button" class="btn_btn"
+                                            data-sidebar_menu_btn="groups_in_common_container" aria-label="">
+                                            Group(s) in common
+                                        </button>
+                                    </li>
+
+                                    <li class="navigation_list_item">
+                                        <button type="button" class="btn_btn" aria-label="">
+                                            Stared message(s)
+                                        </button>
+                                    </li>
+
+                                    <li class="navigation_list_item">
+                                        <button type="button" class="btn_btn"
+                                            data-sidebar_menu_btn="media_container" aria-label="">
+                                            Media
+                                        </button>
+                                    </li>
+
+                                    <li class="navigation_list_item">
+                                        <button type="button" class="btn_btn" aria-label="">
+                                            Appearance
+                                        </button>
+                                    </li>
+
+                                    <li class="navigation_list_item">
+                                        <button type="button" class="btn_btn"
+                                            data-sidebar_menu_btn="about_container" aria-label="">
+                                            About
+                                        </button>
+                                    </li>
+                                </ul>
+
+                            </div>
+
                         </div>
 
-                        <div class="profile_name">
-                            Seid Ali
-                        </div>
                     </div>
 
-                    <div class="buttons_container">
+                    <div class="container_sub" data-sidebar_menu_container="groups_in_common_container"
+                        data-state="closed">
 
-                        <ul class="action_buttons">
-                            <li class="action_button">
-                                <button type="button" aria-label="">
-                                    Mute/Unmute
-                                </button>
-                            </li>
+                        <header class="panel_header">
+                            <button type="button" class="btn_icon" data-sidebar_menu_btn="side_panel_menu"
+                                aria-label="" aria-controls="">
+                                <i class="icon_angle-left-solid"></i>
+                            </button>
 
-                            <li class="action_button">
-                                <button type="button" aria-label="">
+                            <h2>Group(s) in Common</h2>
+                        </header>
 
-                                </button>
-                            </li>
+                        <div class="panel_body">
 
-                            <li class="action_button">
-                                <button type="button" aria-label="">
+                            <ul class="members_list">
+                                <li class="members_list_item">
+                                    <div class="avatar_container">
+                                        <img src="../uploads/userAvatars/user.svg">
+                                    </div>
+                                    <div class="metadata_container">
+                                        <span>Seid Ali</span>
+                                        <small>Online</small>
+                                    </div>
+                                    <div class="actions_container">
+                                        <button type="button" class="btn_icon" aria-label="">
+                                            <i class="icon_ellipsis-vertical-solid"></i>
+                                        </button>
+                                    </div>
+                                </li>
 
-                                </button>
-                            </li>
+                                <li class="members_list_item">
+                                    <div class="avatar_container">
+                                        <img src="../uploads/userAvatars/user.svg">
+                                    </div>
+                                    <div class="metadata_container">
+                                        <span>Seid Ali</span>
+                                        <small>Online</small>
+                                    </div>
+                                    <div class="actions_container">
+                                        <button type="button" class="btn_icon" aria-label="">
+                                            <i class="icon_ellipsis-vertical-solid"></i>
+                                        </button>
+                                    </div>
+                                </li>
+                            </ul>
 
-                        </ul>
+                        </div>
+
+                    </div>
+
+                    <div class="container_sub" data-sidebar_menu_container="media_container" data-state="closed">
+
+                        <header class="panel_header">
+                            <button type="button" class="btn_icon" data-sidebar_menu_btn="side_panel_menu"
+                                aria-label="" aria-controls="">
+                                <i class="icon_angle-left-solid"></i>
+                            </button>
+
+                            <h2>Media</h2>
+                        </header>
+
+                        <div class="panel_body">
+
+                        </div>
+
+                    </div>
+
+                    <div class="container_sub" data-sidebar_menu_container="about_container" data-state="closed">
+
+                        <header class="panel_header">
+                            <button type="button" class="btn_icon" data-sidebar_menu_btn="side_panel_menu"
+                                aria-label="" aria-controls="">
+                                <i class="icon_angle-left-solid"></i>
+                            </button>
+
+                            <h2>About</h2>
+                        </header>
+
+                        <div class="panel_body">
+
+                        </div>
+
+                    </div>
+
+                    <div class="container_sub" data-sidebar_menu_container="message_container" data-state="closed">
+
+                        <header class="panel_header">
+                            <button type="button" class="btn_icon" data-sidebar_menu_btn="side_panel_menu"
+                                aria-label="" aria-controls="">
+                                <i class="icon_angle-left-solid"></i>
+                            </button>
+
+                            <h2>Message Info</h2>
+                        </header>
+
+                        <div class="panel_body">
+
+                            <div class="message_info">
+
+                                <div class="message_content">
+                                    <p class="message_text">
+                                        Lorem ipsum dolor, sit amet consectetur adipisicing
+                                        elit. Cum molestiae quod repellat eius provident porro officia.
+                                        Aspernatur voluptate, laborum obcaecati nisi minus ab accusamus illum
+                                        culpa blanditiis earum consectetur eaque?
+                                    </p>
+                                </div>
+
+                                <ul class="message_status_list">
+                                    <li class="message_status">
+
+                                        <div class="status_container">
+
+                                            <span class="status sent">
+                                                <i class="icon_check-solid"></i>
+                                                <i class="icon_check-solid"></i>
+                                            </span>
+
+                                            <b class="status_name">Sent</b>
+                                        </div>
+
+                                        <small class="status_time">
+                                            <time datetime="">Today at 10:40 PM</time>
+                                        </small>
+                                    </li>
+
+                                    <li class="message_status">
+
+                                        <div class="status_container">
+
+                                            <span class="status delivered">
+                                                <i class="icon_check-solid"></i>
+                                                <i class="icon_check-solid"></i>
+                                            </span>
+
+                                            <b class="status_name">Delivered</b>
+                                        </div>
+
+                                        <small class="status_time">
+                                            <time datetime="">Today at 10:40 PM</time>
+                                        </small>
+                                    </li>
+
+                                    <li class="message_status">
+
+                                        <div class="status_container">
+
+                                            <span class="status read">
+                                                <i class="icon_check-solid"></i>
+                                                <i class="icon_check-solid"></i>
+                                            </span>
+
+                                            <b class="status_name">Read</b>
+                                        </div>
+
+                                        <small class="status_time">
+                                            <time datetime="">Today at 10:40 PM</time>
+                                        </small>
+                                    </li>
+                                </ul>
+
+                            </div>
+
+                        </div>
 
                     </div>
 

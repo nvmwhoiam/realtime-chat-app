@@ -65,7 +65,7 @@ export function createUserItemGroup(userData, profileName) {
 
     const conversationHTML = `
         <li class="conversation_list_item">
-            <button type="button" class="conversation_btn group profile_element" data-conversation_id="${userData.conversationID}">
+            <button type="button" class="conversation_btn group profile_element" data-isSeen='true' data-conversation_id="${userData.conversationID}">
 
                 <div class="avatar_container profile_image">
                     <img src="../uploads/userAvatars/${userData.groupAvatar}" alt="Group avatar"
@@ -81,7 +81,7 @@ export function createUserItemGroup(userData, profileName) {
                         <p class="message_text">
                             ${senderName} ${lastMessageContent}
                         </p>
-                        <p class="chat_typing"></p>
+                    
                     </div>
 
                 </div>
@@ -92,11 +92,7 @@ export function createUserItemGroup(userData, profileName) {
                         <time datetime="${createdAt}">${formattedDate}</time>
                     </div>
 
-                    <div class="status_container">
-                        <span class="not_badge">
-                            <i class="not_seen_times">0</i>
-                        </span>
-                    </div>
+                    <div class="status_container"></div>
 
                 </div>
 
@@ -145,7 +141,7 @@ export function createChatContainerGroup(chatData) {
                     <button type="button" class="btn_icon">
                         <i class="icon_microphone-solid"></i>
                     </button>
-                    <input type="text" placeholder="Type something..." name="send_message">
+                    <input type="text" placeholder="Type something..." data-isTyping="false" name="send_message">
                         <div class="dropdown">
                             <button type="button" class="btn_icon icon_dropdown" data-btn="attach">
                                 <i class="icon_paperclip-solid"></i>
@@ -193,11 +189,11 @@ export function createChatContainerGroup(chatData) {
 
             </section>
 
-            <aside class="chat_side_panel" modal_container="side_panel_modal" data-state="closed">
+            <aside class="chat_side_panel" data-modal_container="side_panel_modal" data-state="closed">
 
                 <div class="container">
 
-                    <div class="container_main" data-menu_container="side_panel_menu" data-state="open">
+                    <div class="container_main" data-sidebar_menu_container="side_panel_menu" data-state="open">
 
                         <header class="panel_header">
                             <button type="button" class="btn_icon" data-modal_btn="side_panel_modal"
@@ -259,7 +255,7 @@ export function createChatContainerGroup(chatData) {
 
                                     <li class="navigation_list_item">
                                         <button type="button" class="btn_btn"
-                                            data-modal_menu_btn="members_container" aria-label="">
+                                            data-sidebar_menu_btn="members_container" aria-label="">
                                             Members
                                         </button>
                                     </li>
@@ -272,7 +268,7 @@ export function createChatContainerGroup(chatData) {
 
                                     <li class="navigation_list_item">
                                         <button type="button" class="btn_btn"
-                                            data-modal_menu_btn="media_container" aria-label="">
+                                            data-sidebar_menu_btn="media_container" aria-label="">
                                             Media
                                         </button>
                                     </li>
@@ -296,10 +292,10 @@ export function createChatContainerGroup(chatData) {
 
                     </div>
 
-                    <div class="container_sub" data-menu_container="members_container" data-state="closed">
+                    <div class="container_sub" data-sidebar_menu_container="members_container" data-state="closed">
 
                         <header class="panel_header">
-                            <button type="button" class="btn_icon" data-modal_menu_btn="side_panel_menu"
+                            <button type="button" class="btn_icon" data-sidebar_menu_btn="side_panel_menu"
                                 aria-label="" aria-controls="">
                                 <i class="icon_angle-left-solid"></i>
                             </button>
@@ -327,17 +323,17 @@ export function createChatContainerGroup(chatData) {
                                             </div>
                                         </li>
                                         `).join('')}
-                                        
+                    
                             </ul>
 
                         </div>
 
                     </div>
 
-                    <div class="container_sub" data-menu_container="media_container" data-state="closed">
+                    <div class="container_sub" data-sidebar_menu_container="media_container" data-state="closed">
 
                         <header class="panel_header">
-                            <button type="button" class="btn_icon" data-modal_menu_btn="side_panel_menu"
+                            <button type="button" class="btn_icon" data-sidebar_menu_btn="side_panel_menu"
                                 aria-label="" aria-controls="">
                                 <i class="icon_angle-left-solid"></i>
                             </button>

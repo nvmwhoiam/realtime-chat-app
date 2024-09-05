@@ -43,7 +43,6 @@ socket.on("connect", async () => {
     // Add event listeners to interact with the server
     socket.on('userData', (userData) => {
         profileAvatars.forEach(e => {
-
             const ifExists = e.querySelector('.profile_avatar');
             if (!ifExists) {
                 const createImg = document.createElement("img");
@@ -152,6 +151,45 @@ function chatEventListeners() {
             }
         }
 
+        // const sidebarMenuBtns = chatContainerInner.querySelector('[data-sidebar_menu_btn]');
+        // if (sidebarMenuBtns && sidebarMenuBtns.contains(event.target)) {
+
+        //     const parentElement = this.closest('.container_main') || this.closest('.container_sub');
+        //     const getAttr = this.getAttribute('data-sidebar_menu_btn');
+        //     const targetMenu = document.querySelector(`[data-sidebar_menu_container="${getAttr}"]`);
+
+        //     // setClosingToClosed(parentElement);
+        //     // setClosedToOpen(targetMenu);
+
+        //     console.log(parentElement, targetMenu);
+        // }
+
+        // Check if the clicked element is a sidebar menu button
+        const sidebarMenuBtn = event.target.closest('[data-sidebar_menu_btn]');
+        if (sidebarMenuBtn) {
+            // Find the closest parent sidebar (aside element) containing the button
+            const sidebarPanel = sidebarMenuBtn.closest('aside');
+
+            // Get the target container's name from the button's data attribute
+            const targetAttr = sidebarMenuBtn.getAttribute('data-sidebar_menu_btn');
+
+            // Find the target container within the same sidebar
+            const targetMenu = sidebarPanel.querySelector(`[data-sidebar_menu_container="${targetAttr}"]`);
+
+            // If there's a currently open menu, close it
+            const openMenu = sidebarPanel.querySelector('[data-state="open"]');
+            if (openMenu && openMenu !== targetMenu) {
+                setClosingToClosed(openMenu);
+            }
+
+            // Toggle the target menu's state
+            if (targetMenu && targetMenu.getAttribute('data-state') === 'closed') {
+                setClosedToOpen(targetMenu);
+            } else if (targetMenu && targetMenu.getAttribute('data-state') === 'open') {
+                setClosingToClosed(targetMenu);
+            }
+        }
+
         const attachBtns = chatContainerInner.querySelector('[data-btn="attach"]');
         const emojisBtns = chatContainerInner.querySelector('[data-btn="emojis"]');
         if (attachBtns && attachBtns.contains(event.target)) {
@@ -199,7 +237,6 @@ function chatEventListeners() {
     selectors.chatsContainer.addEventListener('focusout', function (event) {
         // Check if the event target is an input with the name 'send_message'
         if (event.target.matches('[name="send_message"]')) {
-
             handleMessageOnBlur(event.target);
         }
     });
@@ -235,8 +272,9 @@ function handleMessageOnBlur(targetElement) {
     const isGroupChat = chatContainer.classList.contains('group');
     const conversationID = chatContainer.getAttribute("data-chat_id");
 
-    if (targetElement.classList.contains('typing')) {
-        targetElement.classList.remove('typing');
+    const isTyping = targetElement.getAttribute('data-isTyping') === 'true';
+    if (isTyping) {
+        targetElement.setAttribute('data-isTyping', 'false');
 
         if (isGroupChat) {
             socket.emit('typingStopGroup', conversationID);
@@ -277,62 +315,89 @@ function handleMessageSubmit(target) {
 }
 
 function handleTypingStopOnSubmit(chatContainer, type, conversationID) {
-    const typingElement = chatContainer.querySelector('.typing');
-    if (typingElement) {
-        typingElement.classList.remove('typing');
+    const messageInputSelector = chatContainer.querySelector('[name="send_message"]');
+    const isTyping = messageInputSelector.getAttribute('data-isTyping') === 'true';
+
+    if (isTyping) {
+        messageInputSelector.setAttribute('data-isTyping', 'false');
+
         const typingStopEvent = type === 'group' ? 'typingStopGroup' : 'typingStopPrivate';
         socket.emit(typingStopEvent, conversationID);
     }
 }
 
-// Function to handle conversation item on click
 function handleConversationButtons(currentButton) {
-    const conversationsButton = selectors.conversationList.querySelectorAll('.conversation_btn');
-
-    // Deactivate all buttons
-    conversationsButton.forEach(e => e.classList.remove('active'));
-
-    // Activate the clicked button
-    currentButton.classList.add('active');
-
-    selectors.chatsContainer.setAttribute("data-state", innerWidth < 768 ? "open" : "closing");
-
-    // Check if the clicked currentButton is a group chat
-    const isGroup = currentButton.classList.contains('group');
-
-    // Find the currently active chat container and deactivate it
-    const activeChat = document.querySelector(".chat_container.active");
-    if (activeChat) {
-        activeChat.classList.remove("active");
-    }
+    // Toggle chat container based on screen size
+    selectors.chatsContainer.setAttribute("data-state", innerWidth < 768 ? "open" : "closed");
 
     // Get the conversation ID from the clicked currentButton
     const conversationID = currentButton.getAttribute('data-conversation_id');
 
-    // Find the chat container corresponding to the conversation ID
-    const targetChat = document.querySelector(`[data-chat_id="${conversationID}"]`);
-    targetChat.classList.add("active");
+    // Check if the clicked currentButton is a group chat
+    const isGroup = currentButton.classList.contains('group');
 
-    onSeenClickItemLogic(currentButton);
+    // Find the currently active button
+    const activeConversationBtn = document.querySelector('.conversation_btn.active');
 
-    // Clear the chat messages container before fetching new messages
-    const chatMessagesContainer = targetChat.querySelector(".chat_messages");
-    chatMessagesContainer.innerHTML = '';
+    // Find the currently active chat container
+    const activeConversationChat = document.querySelector('.chat_container.active');
 
-    // Emit the appropriate event to request messages
-    if (isGroup) {
-        socket.emit("requestMessagesGroup", conversationID);
+    // If the clicked button is already active, remove the active class from both the button and chat container
+    if (activeConversationBtn === currentButton) {
+        currentButton.classList.remove('active');
+        if (activeConversationChat) {
+            const chatMessagesContainer = activeConversationChat.querySelector(".chat_messages");
+            chatMessagesContainer.innerHTML = '';
+
+            activeConversationChat.classList.remove('active');
+        }
     } else {
-        socket.emit("requestMessages", conversationID);
+        // If there is another active button, remove the active class from it
+        if (activeConversationBtn) {
+            const chatMessagesContainer = activeConversationChat.querySelector(".chat_messages");
+            chatMessagesContainer.innerHTML = '';
+
+            activeConversationBtn.classList.remove('active');
+        }
+
+        // Add the active class to the clicked button
+        currentButton.classList.add('active');
+
+        // If there is another active chat, remove the active class from it
+        if (activeConversationChat) {
+            activeConversationChat.classList.remove('active');
+        }
+
+        // Find the chat container corresponding to the conversation ID
+        const targetChat = document.querySelector(`[data-chat_id="${conversationID}"]`);
+
+        // Clear the chat messages container before fetching new messages
+        if (targetChat) {
+            const chatMessagesContainer = targetChat.querySelector(".chat_messages");
+            chatMessagesContainer.innerHTML = '';
+
+            // Add the active class to the corresponding chat container
+            targetChat.classList.add('active');
+
+            onSeenClickItemLogic(currentButton);
+
+            // Emit the appropriate event to request messages
+            if (isGroup) {
+                socket.emit("requestMessagesGroup", conversationID);
+            } else {
+                socket.emit("requestMessages", conversationID);
+            }
+        }
     }
 }
 
 function onSeenClickItemLogic(currentButton) {
-    const isSeen = currentButton.classList.contains('not_seen');
+    const isNotSeen = currentButton.getAttribute('data-isSeen') === 'false';
+    if (isNotSeen) {
+        // If it was not seen, mark it as seen (true)
+        currentButton.setAttribute('data-isSeen', 'true');
 
-    if (isSeen) {
-        currentButton.querySelector(".not_badge .not_seen_times").innerText = 0;
-        currentButton.classList.remove('not_seen');
+        currentButton.querySelector(".not_badge").remove();
     }
 }
 

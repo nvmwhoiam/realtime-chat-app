@@ -2,17 +2,18 @@
 
 import socket from '../../../socket/socketManager.js'; // Adjust the path as needed
 
-socket.on("typingStartPrivateIndicator", (conversationID, currentUser) => {
-    handleTypingPrivate(conversationID, currentUser)
+socket.on("typingStartPrivateFeedback", (conversationID, currentUser) => {
+    handleTypingPrivate(conversationID, currentUser); ``
 });
 
-socket.on("typingStopPrivateIndicator", (conversationID, currentUser) => {
-    handleTypingPrivate(conversationID, currentUser, false)
+socket.on("typingStopPrivateFeedback", (conversationID, currentUser) => {
+    handleTypingPrivate(conversationID, currentUser, false);
 });
 
 export default function handleTypingStartPrivate(selector, conversationID) {
-    if (!selector.classList.contains('typing')) {
-        selector.classList.add('typing');
+    const isTyping = selector.getAttribute('data-isTyping') === 'false';
+    if (isTyping) {
+        selector.setAttribute('data-isTyping', 'true');
         socket.emit('typingStartPrivate', conversationID);
     }
 }
@@ -26,19 +27,44 @@ function handleTypingPrivate(conversationID, currentUser, isStart = true) {
     const chatMessages = chatContainer.querySelector('.chat_messages');
 
     if (isStart) {
-        if (isActive) {
-            typingIndicatorPrivate(chatMessages, currentUser);
-        } else {
-            conversationContent.classList.add('active');
-            conversationContent.querySelector('.chat_typing').innerHTML = `${currentUser} is typing <span class="dots"><span></span> <span></span> <span></span></span>`;
-        }
+        handleTypingStart(isActive, conversationContent, chatMessages, currentUser);
     } else {
-        if (isActive) {
-            typingIndicatorRemove(chatMessages);
-        } else {
-            conversationContent.classList.remove('active');
-            conversationContent.querySelector('.chat_typing').innerHTML = '';
+        handleTypingStop(isActive, conversationContent, chatMessages);
+    }
+}
+
+function handleTypingStart(isActive, conversationContent, chatMessages, currentUser) {
+    if (isActive) {
+        typingIndicatorPrivate(chatMessages, currentUser);
+    } else {
+        const isTyping = conversationContent.getAttribute('data-isTyping') === 'false';
+        if (isTyping) {
+            conversationContent.setAttribute('data-isTyping', 'true');
+            addTypingIndicator(conversationContent, currentUser);
         }
+    }
+}
+
+function handleTypingStop(isActive, conversationContent, chatMessages) {
+    if (isActive) {
+        typingIndicatorRemove(chatMessages);
+    } else {
+        conversationContent.setAttribute('data-isTyping', 'false');
+        removeTypingIndicator(conversationContent);
+    }
+}
+
+function addTypingIndicator(conversationContent, currentUser) {
+    const typingElement = document.createElement("p");
+    typingElement.classList.add('typing');
+    typingElement.innerHTML = `${currentUser} is typing <span class="dots"><span></span> <span></span> <span></span></span>`;
+    conversationContent.appendChild(typingElement);
+}
+
+function removeTypingIndicator(conversationContent) {
+    const typingElement = conversationContent.querySelector('.typing');
+    if (typingElement) {
+        typingElement.remove();
     }
 }
 
@@ -60,5 +86,7 @@ function typingIndicatorPrivate(chatMessages) {
 
 // Function to handle group typing indicator remove
 function typingIndicatorRemove(chatMessages) {
-    chatMessages.querySelector('.typing_indicator').remove();
+    if (chatMessages) {
+        chatMessages.querySelector('.typing_indicator').remove();
+    }
 }
