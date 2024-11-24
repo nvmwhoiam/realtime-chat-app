@@ -10,13 +10,16 @@ import roomsTosocketID from '../maps/roomsTosocketID.js';
 import mongoose, { mongo } from 'mongoose';
 import userModel from '../models/userSchema.js'; // Import your userModel
 import profileModel from '../models/profileSchema.js'; // Import your profileModel
-import privateMessageModel from '../models/privateMessageSchema.js'; // Import your privateMessageModel
-import groupMessageModel from '../models/groupMessageSchema.js'; // Import your privateMessageModel
 import readByModel from '../models/readBySchema.js'; // Import your readByModel
-import privateConversationModel from '../models/privateConversationSchema.js'; // Import your privateConversationModel
-import groupConversationModel from '../models/groupConversationSchema.js'; // Import your groupConversationModel
-import conversationRequestModel from '../models/conversationRequestSchema.js'; // Import your conversationRequestModel
-import groupConversationRequestModel from '../models/groupConversationRequestSchema.js'; // Import your groupConversationRequestModel
+
+import privateMessageModel from '../models/private/privateMessageSchema.js'; // Import your privateMessageModel
+import privateConversationModel from '../models/private/privateConversationSchema.js'; // Import your privateConversationModel
+import privateConversationRequestModel from '../models/private/privateConversationRequestSchema.js'; // Import your privateConversationRequestModel
+
+import groupMessageModel from '../models/group/groupMessageSchema.js'; // Import your privateMessageModel
+import groupConversationModel from '../models/group/groupConversationSchema.js'; // Import your groupConversationModel
+import groupConversationRequestModel from '../models/group/groupConversationRequestSchema.js'; // Import your groupConversationRequestModel
+
 import { promises as fs } from 'fs';
 import crypto from 'crypto';
 import cookie from 'cookie';
@@ -185,43 +188,46 @@ const socketRouter = async (io) => {
                     }
                 }
 
-                // Extract unique profile names from participants and members
-                const allProfileNames = [
-                    ...new Set([
-                        ...privateConversationDetails.flatMap(convo => convo.participants.map(p => p.profileName)),
-                        ...groupConversationDetails.flatMap(convo => convo.members.map(m => m.profileName))
-                    ])
-                ].filter(profileNames => profileNames !== profileName);
-
-                // Find profile names that exist in the userIDToSocketID map
-                const foundProfileNames = allProfileNames.filter(profileName => {
-                    // Check if profileName exists in the map
-                    for (const { userData } of userIDToSocketID.values()) {
-                        if (userData.profileName === profileName) {
-                            return true;
-                        }
-                    }
-                    return false;
-                });
-
-                socket.emit('onlineProfileList', foundProfileNames);
-
-                foundProfileNames.forEach(eachProfileName => {
-                    const recipientSocketIDs = findSocketIDByprofileName(eachProfileName);
-
-                    if (recipientSocketIDs) {
-                        recipientSocketIDs.forEach(socketID => {
-                            // Emit all online profiles to ones that have a conversation with 
-                            io.to(socketID).emit('onlineProfile', profileName);
-                        });
-                    }
-                });
+                getOnlineProfiles(privateConversationDetails, groupConversationDetails, profileName);
 
             } catch (error) {
                 console.error('Error fetching user data:', error.message);
                 socket.emit('userDataError', { error: error.message });
             }
         }
+
+        socket.on('uploadImage', async (file, conversationID) => {
+            console.log(`Received file: ${file.fileName}`);
+
+            const randomFileName = generateRandomFileName(file.fileName);
+            const filePath = join(__dirname, '../uploads', 'uploadImages', randomFileName);
+
+            // Check if the file and file content exist
+            if (!file || !file.fileContent) {
+                console.error('Invalid file data received');
+                return;
+            }
+
+            // Remove the base64 metadata from fileContent
+            const base64Data = file.fileContent.replace(/^data:image\/\w+;base64,/, "");
+
+            try {
+                // Write the decoded base64 content to a file
+                await fs.writeFile(filePath, Buffer.from(base64Data, 'base64'));
+                console.log('File saved successfully:', filePath);
+
+                // Send a success message back to the client
+            } catch (err) {
+                console.error(`Error saving file: ${err}`);
+            }
+        });
+
+        // Utility function to generate a random file name
+        const generateRandomFileName = (originalName) => {
+            const randomName = crypto.randomBytes(16).toString('hex');
+            const extension = extname(originalName);
+            return `${randomName}${extension}`;
+        };
 
         // Set up setupPrivateConversation functionality
         setupPrivateConversation(io, socket);
@@ -239,11 +245,9 @@ const socketRouter = async (io) => {
             if (userID !== null) {
                 const userData = userIDToSocketID.get(userID);
                 const socketIndex = userData.socketID.indexOf(socket.id);
+
                 if (socketIndex > -1) {
                     userData.socketID.splice(socketIndex, 1);
-                }
-                if (userData.socketID.length === 0) {
-                    userIDToSocketID.delete(userID);
                 }
 
                 // Check if userID is in any private conversations
@@ -270,15 +274,19 @@ const socketRouter = async (io) => {
 
                 const profileNameDisconnected = userData.userData.profileName;
 
-                foundProfileNames.forEach(eachProfileName => {
-                    const recipientSocketIDs = findSocketIDByprofileName(eachProfileName);
+                if (userData.socketID.length === 0) {
+                    userIDToSocketID.delete(userID);
 
-                    if (recipientSocketIDs) {
-                        recipientSocketIDs.forEach(socketID => {
-                            io.to(socketID).emit('offlineProfile', profileNameDisconnected);
-                        });
-                    }
-                });
+                    foundProfileNames.forEach(eachProfileName => {
+                        const recipientSocketIDs = findSocketIDByprofileName(eachProfileName);
+
+                        if (recipientSocketIDs) {
+                            recipientSocketIDs.forEach(socketID => {
+                                io.to(socketID).emit('offlineProfile', profileNameDisconnected);
+                            });
+                        }
+                    });
+                }
             } else {
                 console.log(`Socket ID ${socket.id} not found in the Map`);
             }
@@ -307,8 +315,8 @@ const socketRouter = async (io) => {
                 const userID = await findProfileIDByProfileName(profileName);
                 const recipientSocketIDs = await findSocketIDByprofileName(profileName);
 
-                // Fetch current user data 
-                const privateConversationRequestSchema = await conversationRequestModel.find({ receiverData: userID })
+                // Fetch current user data
+                const privateConversationRequestSchema = await privateConversationRequestModel.find({ receiverData: userID })
                     .select('-_id createdAt customID senderData status')
                     .populate({
                         path: 'senderData',
@@ -334,7 +342,7 @@ const socketRouter = async (io) => {
             const userID = await findProfileIDByProfileName(profileName);
             const recipientSocketIDs = await findSocketIDByprofileName(profileName);
 
-            // Fetch current user data 
+            // Fetch current user data
             const groupConversationRequestSchema = await groupConversationRequestModel.find({ receiverData: userID })
                 .select('-_id createdAt customID senderData groupData status')
                 .populate({
@@ -420,6 +428,40 @@ const socketRouter = async (io) => {
             }
 
             return Array.from(recipientSocketIDs);
+        }
+
+        function getOnlineProfiles(privateConversationParticipants, groupConversationMembers, profileName) {
+            // Extract unique profile names from participants and members
+            const allProfileNames = [
+                ...new Set([
+                    ...privateConversationParticipants.flatMap(convo => convo.participants.map(p => p.profileName)),
+                    ...groupConversationMembers.flatMap(convo => convo.members.map(m => m.profileName))
+                ])
+            ].filter(profileNames => profileNames !== profileName);
+
+            // Find profile names that exist in the userIDToSocketID map
+            const foundProfileNames = allProfileNames.filter(profileName => {
+                // Check if profileName exists in the map
+                for (const { userData } of userIDToSocketID.values()) {
+                    if (userData.profileName === profileName) {
+                        return true;
+                    }
+                }
+                return false;
+            });
+
+            socket.emit('onlineProfileList', foundProfileNames);
+
+            foundProfileNames.forEach(eachProfileName => {
+                const recipientSocketIDs = findSocketIDByprofileName(eachProfileName);
+
+                if (recipientSocketIDs) {
+                    recipientSocketIDs.forEach(socketID => {
+                        // Emit online profile to ones that have a conversation with
+                        io.to(socketID).emit('onlineProfile', profileName);
+                    });
+                }
+            });
         }
     });
 };

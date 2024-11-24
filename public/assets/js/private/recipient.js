@@ -1,26 +1,17 @@
 import {
-    closeChat,
-    resetDisplayedDividers,
-    dropdownMenu,
     observeMessages,
     handleUnreadMessages,
-    handleReadMessages,
-} from "../functions.js";
+} from "../chat/messageState.js";
 
 import {
-    sendMessage,
     recipientMessage,
-    createUserItem,
-    createChatContainer,
     ifActiveSetMessageStatusDelivered,
-    ifActiveSetMessageStatusRead
 } from './functions.js';
 
 "use strict"
 
 const recipient = (socket) => {
 
-    // Recipient message sent from the server
     socket.on("newMessage", (savedMessage) => {
         // Display received message
         recipientMessage(savedMessage, true);

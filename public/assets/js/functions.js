@@ -1,173 +1,27 @@
 'use strict'
-// Variable to store the dates for which dividers have been displayed
-const displayedDividers = new Map();
-
-// Global variable to track unread counts
-const unreadCounts = new Map();
 
 // Global map to track pending counts
 const pendingCounts = new Map();
 
+import {
+    displayDateDivider
+} from './chat/messageState.js';
+
 // Initialize pending counts for different events
 pendingCounts.set('conversationPending', 0);
 
-const conversationList = document.querySelector('[data-conversation="list"]');
+const conversationList = document.querySelector('[data-list="conversations"]');
+const chatsContainer = document.querySelector('.chats_wrapper');
 
-import selectors from './utils/selectors.js';
-
-export function observeMessages(socket) {
-    // Find the currently active chat container and deactivate it
-    const activeChat = document.querySelector(".chat_container.active");
-
-    if (activeChat) {
-        // Get the conversation ID from the clicked button
-        const conversationID = activeChat.getAttribute('data-chat_id');
-
-        // Check if the clicked button is a group chat
-        const isGroup = activeChat.classList.contains('group');
-
-        const recipientMessages = document.querySelectorAll('.chat_messages .recipient[data-message_id]');
-
-        // Callback function for Intersection Observer
-        const observerCallback = (entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    if (entry.target.getAttribute('data-message_status') !== 'read') {
-                        entry.target.setAttribute('data-message_status', 'read');
-
-                        const messageID = entry.target.getAttribute('data-message_id');
-
-                        if (isGroup) {
-                            socket.emit("readByGroup", messageID, conversationID);
-                        } else {
-                            socket.emit("readBy", messageID, conversationID);
-                        }
-
-                        handleReadMessages(conversationID);
-
-                        // Optionally, unobserve the element after it is marked as read
-                        observer.unobserve(entry.target);
-                    }
-                }
-            });
-        };
-
-        // Create the Intersection Observer
-        const observerOptions = {
-            root: null, // Use the viewport as the container
-            rootMargin: '0px',
-            threshold: 0.6 // Trigger when 60% of the element is visible
-        };
-
-        const observer = new IntersectionObserver(observerCallback, observerOptions);
-
-        // Observe each message element
-        recipientMessages.forEach(message => observer.observe(message));
-    }
-}
-
-export function handleUnreadMessages(isNew = false) {
-    const activeChatContainer = document.querySelector('.chat_container.active');
-    if (!activeChatContainer) return;
-
-    const conversationID = activeChatContainer.getAttribute('data-chat_id');
-    // const chatBody = activeChatContainer.querySelector('.chat_body');
-    const chatMessages = activeChatContainer.querySelector('.chat_messages');
-    const recipientMessages = chatMessages.querySelectorAll('.recipient[data-message_status="delivered"]');
-
-    // Check if the content of chatBody is taller than chatMessages
-    if (chatMessages.scrollHeight <= chatMessages.clientHeight) return;
-
-    if (recipientMessages.length > 0) {
-        // Initialize unread count for the chat if not already initialized
-        if (!unreadCounts.has(conversationID)) {
-            unreadCounts.set(conversationID, 0);
-        }
-
-        // Calculate the unread count based on whether new messages are being handled
-        let unreadCount;
-
-        if (isNew) {
-            // Increment unread count by 1 for an individual new message
-            unreadCount = unreadCounts.get(conversationID) + 1;
-        } else {
-            // Add the number of new messages to the current unread count
-            unreadCount = unreadCounts.get(conversationID) + recipientMessages.length;
-        }
-
-        unreadCounts.set(conversationID, unreadCount);
-
-        // Insert or update unread messages divider
-        const firstDeliveredMessage = recipientMessages[0];
-        const existingUnreadDivider = chatMessages.querySelector('.unread_divider');
-
-        if (!existingUnreadDivider) {
-            const unreadMessageHTML = `
-                <li class="unread_divider">
-                    <span class="inline_divider"></span>
-                    <span class="unread_messages">Unread message(s) (<small class="unread_messages_count">${unreadCount}</small>)</span>
-                    <span class="inline_divider"></span>
-                </li>`;
-            firstDeliveredMessage.insertAdjacentHTML("beforebegin", unreadMessageHTML);
-        } else {
-            const unreadMessageCounter = existingUnreadDivider.querySelector('.unread_messages_count');
-            unreadMessageCounter.innerText = unreadCount;
-
-            // Move the existing unread divider to the correct position if necessary
-            if (firstDeliveredMessage.previousElementSibling !== existingUnreadDivider) {
-                existingUnreadDivider.remove();
-                firstDeliveredMessage.insertAdjacentElement("beforebegin", existingUnreadDivider);
-            }
-        }
-
-    }
-
-    focusOnUnreadMessageDivider(chatMessages);
-}
-
-// Function to decrement unread messages
-export function handleReadMessages(conversationID) {
-    // Initialize unread count for the chat if not already initialized
-    if (!unreadCounts.has(conversationID)) {
-        unreadCounts.set(conversationID, 0);
-    }
-
-    let unreadCount = unreadCounts.get(conversationID) - 1;
-    unreadCount = Math.max(0, unreadCount); // Ensure the count doesn't go below zero
-    unreadCounts.set(conversationID, unreadCount);
-
-    const chatContainer = document.querySelector(`[data-chat_id='${conversationID}'] .chat_messages`);
-    // Update or remove unread messages divider
-    if (chatContainer) {
-        // Check if the unread messages divider is already inserted
-        const existingUnreadDivider = chatContainer.querySelector('.unread_divider');
-
-        if (existingUnreadDivider) {
-            if (unreadCount > 0) {
-                const unreadMessageCounter = existingUnreadDivider.querySelector('.unread_messages_count');
-                unreadMessageCounter.innerText = unreadCount;
-            } else {
-                existingUnreadDivider.remove();
-                unreadCounts.clear();
-            }
-        }
-    }
-}
-
-export function focusOnUnreadMessageDivider(chatMessages) {
-    const unreadDivider = chatMessages.querySelector('.unread_divider');
-
-    if (unreadDivider) {
-        unreadDivider.scrollIntoView({ behavior: "instant", block: "end" });
-    } else {
-        // Scroll to the bottom of the chat container
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-}
-
+///////////////////////////////////
 export function insertSenderLogic(messageData, chatMessageHTML, isNew) {
-    // Insert the message into the chat container
-    const chatContainer = document.querySelector(`[data-chat_id='${messageData.conversationID}']`);
+    const {
+        conversationID,
+        content,
+        createdAt
+    } = messageData;
+
+    const chatContainer = document.querySelector(`[data-chat_id='${conversationID}']`);
     const isActive = chatContainer.classList.contains('active');
     const chatMessages = chatContainer.querySelector('.chat_messages');
 
@@ -180,91 +34,89 @@ export function insertSenderLogic(messageData, chatMessageHTML, isNew) {
     }
 
     if (isNew) {
-        // Update the chat preview message
-        const conversationContainer = document.querySelector(`[data-conversation_id='${messageData.conversationID}']`);
-        const conversationListItem = conversationContainer.closest('.conversation_list_item');
+        const conversationButton = document.querySelector(`[data-conversation_id='${conversationID}']`);
+        const conversationListItem = conversationButton.closest('.conversation_list_item');
 
-        if (!isFirstChild(selectors.conversationList, conversationListItem)) {
+        if (!isFirstChild(conversationList, conversationListItem)) {
             moveToTop(conversationList, conversationListItem);
         }
 
-        if (conversationContainer) {
-            const timeSelector = conversationContainer.querySelector(".time_container time");
+        if (conversationButton) {
+            conversationButton.querySelector(".message_text").innerText = `${content}`;
 
-            conversationContainer.querySelector(".message_text").innerText = `You: ${messageData.content}`;
-            timeSelector.setAttribute('datetime', messageData.createdAt);
-            timeSelector.innerText = hourMinuteDateFormat(messageData.createdAt);
+            // const messageStatus = conversationButton.querySelector('.status_container .status');
+            const timeContainer = conversationButton.querySelector(".time_container");
+            const timeSelector = timeContainer.querySelector("time");
+            timeSelector.setAttribute('datetime', createdAt);
+            timeSelector.innerText = hourMinuteDateFormat(createdAt);
+
+            // messageStatus.setAttribute('data-message_status', 'sent');
         }
     }
-
 }
 
 export function insertRecipientLogic(messageData, chatMessageHTML, isNew) {
-    // Insert the message into the chat container
-    const chatContainer = document.querySelector(`[data-chat_id='${messageData.conversationID}']`);
+    const {
+        conversationID,
+        content,
+        createdAt
+    } = messageData;
+
+    const chatContainer = document.querySelector(`[data-chat_id='${conversationID}']`);
     const isActive = chatContainer.classList.contains('active');
     const isGroup = chatContainer.classList.contains('group');
     const chatMessages = chatContainer.querySelector('.chat_messages');
 
     if (chatMessages) {
-        // Display date divider if necessary
         displayDateDivider(messageData);
-
         chatMessages.insertAdjacentHTML("beforeend", chatMessageHTML);
     }
 
-    // Handle if it is a fetched or a new message
     if (isNew) {
-        const conversationButton = document.querySelector(`[data-conversation_id='${messageData.conversationID}']`);
+        const conversationButton = document.querySelector(`[data-conversation_id='${conversationID}']`);
         const conversationListItem = conversationButton.closest('.conversation_list_item');
 
-        if (!isFirstChild(selectors.conversationList, conversationListItem)) {
+        if (!isFirstChild(conversationList, conversationListItem)) {
             moveToTop(conversationList, conversationListItem);
         }
 
         if (conversationButton) {
             conversationButton.querySelector(".message_body").classList.remove('active');
-            conversationButton.querySelector(".message_text").innerText = `${messageData.senderData.profileName}: ${messageData.content}`;
+            conversationButton.querySelector(".message_text").innerText = `${content}`;
 
-            const timeSelector = conversationButton.querySelector(".time_container time");
-            timeSelector.setAttribute('datetime', messageData.createdAt);
-            timeSelector.innerText = hourMinuteDateFormat(messageData.createdAt);
+            const timeContainer = conversationButton.querySelector(".time_container");
+            const timeSelector = timeContainer.querySelector("time");
+            timeSelector.setAttribute('datetime', createdAt);
+            timeSelector.innerText = hourMinuteDateFormat(createdAt);
         }
 
-        // Handle if the chat container is not open
-        if (!isActive) {
+        // if (!isActive) {
+        //     const isSeen = conversationButton.getAttribute('data-isSeen') === 'true';
+        //     const statusContainer = conversationButton.querySelector('.status_container');
 
-            // Check if the conversation is seen (i.e., 'data-isSeen' is 'true')
-            const isSeen = conversationButton.getAttribute('data-isSeen') === 'true';
-            // Find the notification badge container
-            const statusContainer = conversationButton.querySelector('.status_container');
+        //     if (isSeen) {
+        //         conversationButton.setAttribute('data-isSeen', 'false');
 
-            if (isSeen) {
-                // If it was seen, mark it as not seen (false)
-                conversationButton.setAttribute('data-isSeen', 'false');
+        //         const createSpan = document.createElement("span");
+        //         createSpan.classList.add('not_badge');
 
-                // If the badge doesn't exist, create it
-                const createSpan = document.createElement("span");
-                createSpan.classList.add('not_badge');
+        //         const createI = document.createElement("i");
+        //         createI.classList.add('not_seen_times');
+        //         createI.innerText = '1';
 
-                const createI = document.createElement("i");
-                createI.classList.add('not_seen_times');
-                createI.innerText = '1'; // Initialize with 1 since it's the first unseen notification
+        //         createSpan.appendChild(createI);
+        //         statusContainer.appendChild(createSpan);
+        //     } else {
+        //         const notSeenTimes = statusContainer.querySelector('.not_seen_times');
+        //         let counterValue = parseInt(notSeenTimes.innerText, 10);
+        //         if (isNaN(counterValue)) {
+        //             counterValue = 0;
+        //         }
+        //         counterValue++;
+        //         notSeenTimes.innerText = counterValue;
+        //     }
 
-                createSpan.appendChild(createI);
-                statusContainer.appendChild(createSpan);
-            } else {
-                // If the badge already exists, increment the counter
-                const notSeenTimes = statusContainer.querySelector('.not_seen_times');
-                let counterValue = parseInt(notSeenTimes.innerText, 10);
-                if (isNaN(counterValue)) {
-                    counterValue = 0; // Ensure counter starts at 0 if parsing fails
-                }
-                counterValue++;
-                notSeenTimes.innerText = counterValue;
-            }
-
-        }
+        // }
     }
 }
 
@@ -274,33 +126,6 @@ export function hourMinuteDateFormat(dateString) {
     return date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
 }
 
-function formatDate(dateString) {
-    const now = new Date();
-    const date = new Date(dateString);
-
-    const nowDateOnly = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const dateDateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-
-    const timeDiff = nowDateOnly - dateDateOnly;
-    const oneDay = 24 * 60 * 60 * 1000; // Number of milliseconds in a day
-
-    if (date.getFullYear() === now.getFullYear()) {
-        if (timeDiff < oneDay) {
-            // Date is today
-            return 'Today';
-        } else if (timeDiff < 2 * oneDay) {
-            // Date is yesterday
-            return 'Yesterday';
-        } else {
-            // Date is in the current year, return in "dd MMM" format
-            return date.toLocaleString('en-US', { day: 'numeric', month: 'short' });
-        }
-    } else {
-        // Date is in a previous year, return in "dd MMM yyyy" format
-        return date.toLocaleString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
-    }
-}
-
 export function isScrolledToEnd(element) {
     // Calculate the difference between scroll height and scroll position
     const scrollDifference = element.scrollHeight - element.scrollTop - element.clientHeight;
@@ -308,36 +133,6 @@ export function isScrolledToEnd(element) {
     // Check if the scroll difference is very small (close to 0)
     // This indicates that the user has scrolled to the end
     return Math.abs(scrollDifference) < 1;
-}
-
-function displayDateDivider(messageData) {
-    const messageDate = new Date(messageData.createdAt);
-    const messageDateString = formatDate(messageDate);
-    const conversationID = messageData.conversationID;
-
-    const chatContainer = document.querySelector(`[data-chat_id='${conversationID}'] .chat_messages`);
-
-    // Check if the date divider needs to be displayed
-    if (!displayedDividers.has(conversationID)) {
-        displayedDividers.set(conversationID, new Set());
-    }
-
-    if (!displayedDividers.get(conversationID).has(messageDateString)) {
-        displayedDividers.get(conversationID).add(messageDateString);
-
-        if (chatContainer) {
-            const chatMessageDividerHTML = `
-            <li class="day_divider"><span>${messageDateString}</span></li>
-            `;
-
-            chatContainer.insertAdjacentHTML("beforeend", chatMessageDividerHTML);
-        }
-    }
-}
-
-export function resetDisplayedDividers() {
-    displayedDividers.clear();
-    unreadCounts.clear();
 }
 
 export function formattedMessage(string) {
@@ -484,12 +279,12 @@ export function closeChat() {
     }
 
     //Check if Modal is active if it is then close it before opens another window
-    if (document.querySelector(".chats_container").getAttribute("data-state") === "open") {
+    if (document.querySelector(".chats_wrapper").getAttribute("data-state") === "open") {
 
-        document.querySelector(".chats_container")?.setAttribute("data-state", "closing");
+        document.querySelector(".chats_wrapper")?.setAttribute("data-state", "closing");
 
-        document.querySelector(".chats_container")?.addEventListener("animationend", function () {
-            document.querySelector(".chats_container").setAttribute("data-state", "closed");
+        document.querySelector(".chats_wrapper")?.addEventListener("animationend", function () {
+            document.querySelector(".chats_wrapper").setAttribute("data-state", "closed");
 
         }, { once: true });
 
@@ -514,32 +309,3 @@ export function setClosingToClosed(selector) {
 
     }, { once: true });
 }
-
-// try {
-//     const response = await fetch('./assets/emojis/emojis.json');
-//     const data = await response.json();
-
-//     console.log(data);
-
-//     for (const emojis of data) {
-//         createEmojis(emojis);
-//     }
-
-// } catch (error) {
-//     console.error('Error during fetching videos:', error);
-// }
-
-// function createEmojis(emojis) {
-//     const chatContainer = document.querySelector('.emojiss');
-//     const chatMessageHTML = `
-//         <li>
-// ${emojis}
-//         </li>
-//        `;
-
-//     chatContainer.insertAdjacentHTML("beforeend", chatMessageHTML);
-// }
-
-// chat application
-
-// message from A to B and from A to B to C

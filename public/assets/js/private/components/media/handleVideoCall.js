@@ -2,21 +2,33 @@
 
 import socket from '../../../socket/socketManager.js'; // Adjust the path as needed
 
-export function handleVideoCallButton(conversationID) {
-    socket.emit("videoCallPrivate", conversationID);
-    console.log('Video Call Button Clicked. Conversation ID:', conversationID);
+export function handleVideoCallButton(callData) {
+    socket.emit("videoCallPrivate", callData);
+    // console.log('Video Call Button Clicked. Conversation ID:', callData);
 }
 
-socket.on("videoCallPrivateFeedback", (conversationID) => {
-    console.log(conversationID);
+socket.on("videoCallPrivateSenderFeedback", (callData, isRecipientOnline) => {
+    if (callData) {
+        outgoingCallUI(callData, isRecipientOnline);
+    } else {
+        console.error("No call data received for outgoing call.");
+    }
 });
 
-socket.on("videoCallCancelPrivateFeedback", (conversationID) => {
-    console.log(conversationID);
+socket.on("videoCallPrivateRecipientFeedback", (callData) => {
+    if (callData) {
+        incomingCallUI(callData);
+    } else {
+        console.error("No call data received for incoming call.");
+    }
 });
 
-socket.on("videoCallAcceptPrivateFeedback", (conversationID) => {
-    console.log(conversationID);
+socket.on("videoCallCancelPrivateFeedback", (callData) => {
+    console.log(callData);
+});
+
+socket.on("videoCallAcceptPrivateFeedback", (callData) => {
+    console.log(callData);
 });
 
 // const cancelVideoCall = document.querySelector('[data-btn="videoCallCancel"]');
@@ -144,4 +156,142 @@ function handleHangUpCall() {
     const parentElement = this.closest('.video_call');
 
     parentElement.remove();
+}
+
+function outgoingCallUI(callData, isRecipientOnline) {
+    const callStatus = isRecipientOnline ? "outgoing" : "connecting"; // Set call status based on recipient's online status
+
+    const HTMLContainer = `   
+    <div class="video_call" data-call_id="${callData.callID}" data-mode="dialMode">
+
+        <div class="video_call_container">
+
+            <div class="container_wrapper">
+
+                <div class="profile_avatar">
+                    <div class="avatar_wrapper">
+                        <img src="../uploads/userAvatars/${callData.receiverData.profileAvatar}">
+                    </div>
+                </div>
+
+                <div class="profile_name">
+                    <h3>${callData.receiverData.profileName}</h3>
+                    <p>${callStatus} video call <span class="dots"><span></span><span></span><span></span></span></p>
+                </div>
+
+                <div class="buttons">
+                    <button type="button" class="btn_icon" data-btn="" aria-label="">
+                        <i class="icon_volume-xmark-solid"></i>
+                    </button>
+
+                    <button type="button" class="btn_icon hangup_call_btn" data-btn="" aria-label="">
+                        <i class="icon_phone-slash-solid"></i>
+                    </button>
+
+                    <button type="button" class="btn_icon" data-btn="" aria-label="">
+                        <i class="icon_microphone-slash-solid"></i>
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="video_container">
+
+            <div class="remote_container">
+                <video class="recipientsView" id="remoteVideo" autoplay> </video>
+
+                <div class="recipientsView_controls">
+                    <button type="button" class="btn_icon" data-btn="toggleVideo" aria-label="">
+                        <i class="icon_video-solid"></i>
+                    </button>
+                    <button type="button" class="btn_icon" data-btn="toggleVolume" aria-label="">
+                        <i class="icon_volume-high-solid"></i>
+                    </button>
+                    <button type="button" class="btn_icon" data-btn="toggleMicrophone" aria-label="">
+                        <i class="icon_microphone-solid"></i>
+                    </button>
+                    <button type="button" class="btn_icon hangup_call" data-btn="hangup_call" aria-label="">
+                        <i class="icon_phone-slash-solid"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="local_container">
+                <video class="sendersView" id="localVideo" autoplay></video>
+            </div>
+
+        </div>
+
+    </div>
+    `;
+
+    document.querySelector('body').insertAdjacentHTML("beforeend", HTMLContainer);
+}
+
+function incomingCallUI(callData) {
+    const HTMLContainer = `
+        <div class="video_call" data-call_id="${callData.callID}" data-mode="dialMode">
+
+            <div class="video_call_container">
+
+                <div class="container_wrapper">
+
+                    <div class="profile_avatar">
+                        <div class="avatar_wrapper">
+                            <img src="../../../../../../uploads/userAvatars/${callData.senderData.profileAvatar}">
+                        </div>
+                    </div>
+
+                    <div class="profile_name">
+                        <h3>${callData.senderData.profileName}</h3>
+                        <p>incoming video call <span class="dots"><span></span><span></span><span></span></span></p>
+                    </div>
+
+                    <div class="buttons">
+                        <button type="button" class="btn_icon reject_call_btn" data-btn="videoCallCancel" aria-label="">
+                            <i class="icon_phone-slash-solid"></i>
+                        </button>
+
+                        <button type="button" class="btn_icon accept_call_btn" data-btn="videoCallAccept" aria-label="">
+                            <i class="icon_phone-solid"></i>
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="video_container">
+
+                <div class="remote_container">
+                    <video class="recipientsView" id="remoteVideo" autoplay> </video>
+
+                    <div class="recipientsView_controls">
+                        <button type="button" class="btn_icon" data-btn="toggleVideo" aria-label="">
+                            <i class="icon_video-solid"></i>
+                        </button>
+                        <button type="button" class="btn_icon" data-btn="toggleVolume" aria-label="">
+                            <i class="icon_volume-high-solid"></i>
+                        </button>
+                        <button type="button" class="btn_icon" data-btn="toggleMicrophone" aria-label="">
+                            <i class="icon_microphone-solid"></i>
+                        </button>
+                        <button type="button" class="btn_icon hangup_call" data-btn="hangup_call" aria-label="">
+                            <i class="icon_phone-slash-solid"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="local_container">
+                    <video class="sendersView" id="localVideo" autoplay></video>
+                </div>
+
+            </div>
+
+        </div>
+        `;
+
+    document.querySelector('body').insertAdjacentHTML("beforeend", HTMLContainer);
 }

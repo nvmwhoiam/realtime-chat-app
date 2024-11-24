@@ -3,9 +3,10 @@
 import mongoose, { mongo } from 'mongoose';
 import userModel from '../../models/userSchema.js'; // Import your userModel 
 import profileModel from '../../models/profileSchema.js'; // Import your profileModel 
-import privateMessageModel from '../../models/privateMessageSchema.js'; // Import your privateMessageModel 
-import privateConversationModel from '../../models/privateConversationSchema.js'; // Import your privateConversationModel 
-import conversationRequestModel from '../../models/conversationRequestSchema.js'; // Import your conversationRequestModel 
+import privateMessageModel from '../../models/private/privateMessageSchema.js'; // Import your privateMessageModel 
+import privateCallsModel from '../../models/private/privateCallSchema.js'; // Import your privateMessageModel 
+import privateConversationModel from '../../models/private/privateConversationSchema.js'; // Import your privateConversationModel 
+import conversationRequestModel from '../../models/private/privateConversationRequestSchema.js'; // Import your conversationRequestModel 
 
 import getProfileDataByProfileName from '../../utils/getProfileDataByProfileName.js';
 import findUserSocketIDByprofileName from '../../utils/findUserSocketIDByprofileName.js';
@@ -110,6 +111,10 @@ const setupPrivateConversation = async (io, socket) => {
                     path: 'senderData',
                     select: '-_id profileName'
                 })
+                .populate({
+                    path: 'replyTo',
+                    select: '-_id'
+                })
                 // .limit(10)
                 .exec();
 
@@ -149,6 +154,7 @@ const setupPrivateConversation = async (io, socket) => {
     // await privateMessageModel.deleteMany({});
     // await privateConversationModel.deleteMany({});
     // await conversationRequestModel.deleteMany({});
+    // await privateCallsModel.deleteMany({});
 };
 
 export default setupPrivateConversation;

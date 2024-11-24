@@ -1,9 +1,11 @@
 // handleCreateConversation.js
 
+// Models
 import profileModel from '../../../models/profileSchema.js'; // Import your profileModel 
-import privateConversationModel from '../../../models/privateConversationSchema.js'; // Import your privateConversationModel 
-import conversationRequestModel from '../../../models/conversationRequestSchema.js'; // Import your conversationRequestModel 
+import privateConversationModel from '../../../models/private/privateConversationSchema.js'; // Import your privateConversationModel 
+import conversationRequestModel from '../../../models/private/privateConversationRequestSchema.js'; // Import your conversationRequestModel 
 
+// Maps
 import findSocketIDByprofileName from '../../../utils/findSocketIDByprofileName.js';
 import findProfileIDByProfileName from '../../../utils/findProfileIDByProfileName.js';
 
@@ -139,6 +141,9 @@ const handleCreateConversation = async (io, socket) => {
 
                         // Sends a message to the recipient from a sender if it's online
                         io.to(eachSocketID).emit("privateConversationRequestAcceptedFeedback", userData, chatData);
+
+                        // Emit status to online profile when profile accepts a conversation
+                        io.to(eachSocketID).emit('onlineProfile', receiverProfileName);
                     });
                 }
 
@@ -152,6 +157,9 @@ const handleCreateConversation = async (io, socket) => {
 
                         // Sends a message to the recipient from a sender if it's online
                         io.to(eachSocketID).emit("privateConversationRequestAcceptedFeedback", userData, chatData);
+
+                        // Emit status to online profile when profile accepts a conversation
+                        io.to(eachSocketID).emit('onlineProfile', senderProfileName);
                     });
                 }
             }
@@ -164,7 +172,6 @@ const handleCreateConversation = async (io, socket) => {
     // Function to reject a requested conversation.
     socket.on('privateConversationRequestRejected', async (customID) => {
         try {
-
             const currentUser = socket.sID;
 
             const profileID = await findProfileIDByProfileName(currentUser);

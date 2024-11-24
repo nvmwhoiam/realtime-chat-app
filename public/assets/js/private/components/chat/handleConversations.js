@@ -1,12 +1,12 @@
 import {
     createUserItem,
     createChatContainer,
-} from './functions.js';
+} from '../../functions.js';
 
 import {
     incrementPending,
     decrementPending
-} from '../functions.js';
+} from '../../../functions.js';
 
 'use strict'
 
@@ -206,6 +206,5 @@ const handleConversations = (socket) => {
 
     }
 }
-
 
 export default handleConversations;

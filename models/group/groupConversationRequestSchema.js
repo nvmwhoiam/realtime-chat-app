@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { db2Connection } from '../db.js';
+import { db2Connection } from '../../db.js';
 import crypto from 'crypto';
 
 const groupConversationRequestSchema = new mongoose.Schema({

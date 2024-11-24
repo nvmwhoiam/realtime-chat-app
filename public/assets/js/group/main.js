@@ -3,18 +3,14 @@ import setupRecipient from './recipient.js';
 import handleConversations from "./handleConversations.js";
 
 import {
-    closeChat,
-    resetDisplayedDividers,
-    dropdownMenu,
     observeMessages,
-    handleUnreadMessages
-} from "../functions.js";
+    handleUnreadMessages,
+    resetDisplayedDividers
+} from "../chat/messageState.js";
 
 import {
     sendMessageGroup,
     recipientMessageGroup,
-    createUserItemGroup,
-    createChatContainerGroup,
 } from './functions.js';
 
 "use strict"

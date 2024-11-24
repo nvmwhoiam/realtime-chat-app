@@ -1,16 +1,10 @@
 import {
-    closeChat,
-    resetDisplayedDividers,
-    dropdownMenu,
     observeMessages,
     handleUnreadMessages
-} from "../functions.js";
+} from "../chat/messageState.js";
 
 import {
-    sendMessageGroup,
-    recipientMessageGroup,
-    createUserItemGroup,
-    createChatContainerGroup,
+    recipientMessageGroup
 } from './functions.js';
 
 const recipient = (socket) => {

@@ -1,14 +1,6 @@
 import {
-    closeChat,
-    resetDisplayedDividers,
-    dropdownMenu,
-    handleReadMessages,
-} from "../functions.js";
-
-import {
     sendMessage,
     ifActiveSetMessageStatusDelivered,
-    ifActiveSetMessageStatusRead,
 } from './functions.js';
 
 "use strict"

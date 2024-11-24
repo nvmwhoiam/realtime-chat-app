@@ -3,10 +3,11 @@
 import mongoose, { mongo } from 'mongoose';
 import userModel from '../../models/userSchema.js'; // Import your userModel 
 import profileModel from '../../models/profileSchema.js'; // Import your profileModel 
-import groupMessageModel from '../../models/groupMessageSchema.js'; // Import your privateMessageModel 
+
 import readByModel from '../../models/readBySchema.js'; // Import your readByModel 
-import groupConversationModel from '../../models/groupConversationSchema.js'; // Import your groupConversationModel 
-import groupConversationRequestModel from '../../models/groupConversationRequestSchema.js'; // Import your conversationGroupRequestModel 
+import groupMessageModel from '../../models/group/groupMessageSchema.js'; // Import your privateMessageModel 
+import groupConversationModel from '../../models/group/groupConversationSchema.js'; // Import your groupConversationModel 
+import groupConversationRequestModel from '../../models/group/groupConversationRequestSchema.js'; // Import your conversationGroupRequestModel 
 
 import userIDToSocketID from '../../maps/userIDToSocketID.js';
 import roomsTosocketID from '../../maps/roomsTosocketID.js';

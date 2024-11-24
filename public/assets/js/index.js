@@ -142,3 +142,121 @@ tabButtons.forEach(eachBtn => {
 //         console.log('ServiceWorker registration failed: ', err);
 //     });
 // }
+
+// const response = await fetch('./assets/emojis/emojis_v2.json');
+
+// const emojis = await response.json();
+
+// const smileys_and_people = emojis.smileys_and_people;
+// const animals_and_nature = emojis.animals_and_nature;
+// const food = emojis.food;
+// const travel_and_places = emojis.travel_and_places;
+// const activities = emojis.activities;
+// const objects = emojis.objects;
+// const symbols = emojis.symbols;
+// const flags = emojis.flags;
+
+// const smileysAndPeople = document.querySelector('[data-emojis="smileys_and_people"]');
+// const animalsAndNature = document.querySelector('[data-emojis="animals_and_nature"]');
+// const foodElement = document.querySelector('[data-emojis="food"]');
+// const travelAndPlaces = document.querySelector('[data-emojis="travel_and_places"]');
+// const activitiesElement = document.querySelector('[data-emojis="activities"]');
+// const objectsElement = document.querySelector('[data-emojis="objects"]');
+// const symbolsElement = document.querySelector('[data-emojis="symbols"]');
+// const flagsElement = document.querySelector('[data-emojis="flags"]');
+
+// // Corrected assignments
+// for (const emoji of smileys_and_people) {
+//     loadEmojis(emoji, smileysAndPeople);
+// }
+
+// for (const emoji of animals_and_nature) {
+//     loadEmojis(emoji, animalsAndNature);
+// }
+
+// for (const emoji of food) {
+//     loadEmojis(emoji, foodElement);
+// }
+
+// for (const emoji of travel_and_places) {
+//     loadEmojis(emoji, travelAndPlaces);
+// }
+
+// // Corrected: Assign activities emojis to activitiesElement
+// for (const emoji of activities) {
+//     loadEmojis(emoji, activitiesElement);
+// }
+
+// // Corrected: Assign objects emojis to objectsElement
+// for (const emoji of objects) {
+//     loadEmojis(emoji, objectsElement);
+// }
+
+// // Corrected: Assign symbols emojis to symbolsElement
+// for (const emoji of symbols) {
+//     loadEmojis(emoji, symbolsElement);
+// }
+
+// // Corrected: Assign flags emojis to flagsElement
+// for (const emoji of flags) {
+//     loadEmojis(emoji, flagsElement);
+// }
+
+// function loadEmojis(emoji, emojisDrawer) {
+//     const emojiHTML = `
+//         <li class="emoji_item">
+//             <button type="button" title="${emoji.title}" aria-label="${emoji.title}">
+//                 ${emoji.emoji}
+//             </button>
+//         </li>
+//     `;
+
+//     // Use insertAdjacentHTML to add the new emoji HTML
+//     emojisDrawer.insertAdjacentHTML('beforeend', emojiHTML);
+// }
+
+// function setVideoMode() {
+//     const parentElement = document.querySelector('.call');
+//     const isVideoMode = parentElement.getAttribute('data-mode') === 'videoMode';
+
+//     if (isVideoMode) {
+//         parentElement.setAttribute('data-mode', 'confirmMode');
+//     } else {
+//         parentElement.setAttribute('data-mode', 'videoMode');
+//     }
+
+//     // requestVideoStream();
+// }
+
+// // const cancelVideoCall = document.querySelector('[data-btn="cancel_video_call"]');
+// // const acceptVideoCall = document.querySelector('[data-btn="start_video_call"]');
+
+// const incomingVideoCallReject = document.querySelector('[data-btn="incoming_video_call_reject"]');
+// const incomingVideoCallAccept = document.querySelector('[data-btn="incoming_video_call_accept"]');
+
+// // cancelVideoCall.addEventListener('click', function () {
+// //     const parentElement = this.closest('.call');
+// //     const conversationID = parentElement.getAttribute('data-conversation_id');
+
+// //     parentElement.remove();
+
+// //     // socket.emit("videoCallCancelPrivate", conversationID);
+// // });
+
+// // acceptVideoCall.addEventListener('click', function () {
+// //     const parentElement = this.closest('.call');
+// //     const conversationID = parentElement.getAttribute('data-conversation_id');
+
+// //     setVideoMode();
+
+// //     // socket.emit("videoCallAcceptPrivate", conversationID);
+// // });
+
+// incomingVideoCallAccept.addEventListener('click', function () {
+//     const parentElement = this.closest('.call');
+//     const conversationID = parentElement.getAttribute('data-conversation_id');
+
+//     setVideoMode();
+
+//     // socket.emit("videoCallAcceptPrivate", conversationID);
+// });

@@ -12,7 +12,7 @@
 
     --text-color-secondary: hsl(0, 0%, 70%);
 
-    --border-color: hwb(0 100% 0% / 0.1);
+    --border-color: hsla(0, 0%, 100%, 0.1);
 
     --green-color: hsl(126, 69%, 25%);
     --red-color: hsl(354, 70%, 25%);
@@ -253,6 +253,20 @@ button {
             font-size: var(--font-size-xlarge);
             width: 40px;
             height: 40px;
+            @include Dflex(center);
+            border-radius: var(--border-radius-light);
+        }
+    }
+
+    &.btn_icon_sm {
+        width: 24px;
+        height: 24px;
+        @include Dflex(center);
+
+        i {
+            font-size: var(--font-size-xlarge);
+            width: 20px;
+            height: 20px;
             @include Dflex(center);
             border-radius: var(--border-radius-light);
         }
@@ -657,29 +671,51 @@ a {
 
 @media (prefers-reduced-motion: reduce) {}
 
+// .day_divider,
+// .unread_divider,
+// .sticky_header {
+//     @include Dflex(center);
+
+//     span {
+//         font-size: 12px;
+//         color: var(--text-color-secondary);
+//     }
+// }
+
 .day_divider,
 .unread_divider,
 .sticky_header {
     @include Dflex(center);
+    gap: var(--sm-p);
+    position: relative;
+    font-size: var(--font-size-small);
 
-    span {
-        font-size: 12px;
-        color: var(--text-color-secondary);
-    }
-}
-
-.unread_divider {
-    .unread_messages {
-        margin: 0 var(--sm-p);
-    }
-
-    .inline_divider {
-        display: inline-block;
-        width: 25%;
-        height: 2px;
+    .divider_line {
+        height: 1px;
+        flex: 1;
+        border-radius: var(--border-radius-light);
         background-color: var(--border-color);
     }
 }
+
+.day_divider {
+    &.sticky {
+        @include position(sticky, $top: 0);
+    }
+}
+
+// .unread_divider {
+//     .unread_messages {
+//         margin: 0 var(--sm-p);
+//     }
+
+//     .inline_divider {
+//         display: inline-block;
+//         width: 25%;
+//         height: 2px;
+//         background-color: var(--border-color);
+//     }
+// }
 
 .sticky_header {
     @include position(sticky, $top: 0);
@@ -762,64 +798,49 @@ a {
     @media only screen and (min-width: 768px) {}
 }
 
-.emojis {
-    height: 500px;
-    padding: var(--sm-p);
-    overflow-y: auto;
-    border: 1px solid red;
-    @include hideScroll();
-
-    ul {
-        display: grid;
-        grid-template-columns: repeat(5, 22px);
-        flex-wrap: wrap;
-        gap: var(--sm-p);
-    }
-}
-
 input[type="file"] {
     display: none;
 }
 
-.message_contextmenu {
-    display: flex;
-    position: relative;
-    text-align: left;
+// .message_contextmenu {
+//     display: flex;
+//     position: relative;
+//     text-align: left;
 
-    &_list {
-        width: 100%;
-        max-width: 150px;
-        padding: var(--sm-p);
-        @include position(absolute, $top: 0);
-        border: 1px solid var(--border-color);
-        display: flex;
-        flex-direction: column;
-        gap: var(--sm-p);
-        border-radius: var(--border-radius-light);
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        backdrop-filter: blur(10px);
+//     &_list {
+//         width: 100%;
+//         max-width: 150px;
+//         padding: var(--sm-p);
+//         @include position(absolute, $top: 0);
+//         border: 1px solid var(--border-color);
+//         display: flex;
+//         flex-direction: column;
+//         gap: var(--sm-p);
+//         border-radius: var(--border-radius-light);
+//         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+//         backdrop-filter: blur(10px);
 
-        &[data-position="right"] {
-            right: 0;
-        }
+//         &[data-position="right"] {
+//             right: 0;
+//         }
 
-        &_item {
+//         &_item {
 
-            a,
-            label,
-            button {
-                width: 100%;
-                height: 100%;
-                padding: var(--sm-p);
+//             a,
+//             label,
+//             button {
+//                 width: 100%;
+//                 height: 100%;
+//                 padding: var(--sm-p);
 
-                i {
-                    margin-right: var(--sm-p);
+//                 i {
+//                     margin-right: var(--sm-p);
 
-                }
-            }
-        }
-    }
-}
+//                 }
+//             }
+//         }
+//     }
+// }
 
 button {
     position: relative;
@@ -911,6 +932,7 @@ button {
     display: flex;
     flex-direction: column;
     gap: var(--sm-p);
+    padding: var(--sm-p);
 
     &_item {
         button {
@@ -950,15 +972,20 @@ button {
 
 // .video_call {
 //     @include posCenter(fixed);
-//     border: 1px solid var(--border-color);
-//     border-radius: var(--border-radius-light);
+//     background-color: var(--background-color);
+//     transition: width var(--animation-speed), height var(--animation-speed), opacity var(--animation-speed);
+//     z-index: 999;
 //     user-select: none;
 
 //     &[data-mode="dialMode"] {
+//         // width: 300px;
+//         // height: calc(300px * 16 / 9); // Maintain aspect ratio
+//         opacity: 1;
+
 //         .video_call_container {
 //             @include Dflex(center);
-//             width: 300px;
-//             aspect-ratio: 9/16;
+//             width: 100%;
+//             height: 100%;
 //             transition: width var(--animation-speed), height var(--animation-speed);
 
 //             .container_wrapper {
@@ -970,16 +997,25 @@ button {
 //                     .avatar_wrapper {
 //                         width: 128px;
 //                         height: 128px;
+
+//                         img {
+//                             border-radius: 50%;
+//                             outline: 5px solid var(--background-color-secondary);
+//                         }
 //                     }
 //                 }
 
 //                 .profile_name {
-//                     text-align: center;
 //                     display: flex;
 //                     flex-direction: column;
 //                     align-items: center;
 //                     gap: var(--sm-p);
 //                     margin-top: var(--sm-p);
+
+//                     p {
+//                         display: flex;
+//                         gap: var(--sm-p);
+//                     }
 //                 }
 
 //                 .buttons {
@@ -988,12 +1024,29 @@ button {
 //                     padding: 0 50px;
 
 //                     button {
-//                         &:first-of-type {
-//                             border: 1px solid red;
+//                         border: 1px solid var(--border-color);
+//                         border-radius: 50%;
+//                         background-color: var(--background-color-secondary);
+
+//                         &.hangup_call_btn {
+//                             width: 64px;
+//                             height: 64px;
+//                             background-color: red;
+//                             outline: 5px solid var(--background-color-secondary);
 //                         }
 
-//                         &:last-of-type {
-//                             border: 1px solid green;
+//                         &.reject_call_btn,
+//                         &.accept_call_btn {
+//                             width: 56px;
+//                             height: 56px;
+//                         }
+
+//                         &.reject_call_btn {
+//                             background-color: red;
+//                         }
+
+//                         &.accept_call_btn {
+//                             background-color: green;
 //                         }
 //                     }
 //                 }
@@ -1006,223 +1059,119 @@ button {
 //     }
 
 //     &[data-mode="videoMode"] {
+//         opacity: 1;
+
 //         .video_container {
-//             width: 640px;
-//             aspect-ratio: 16/9;
-//             position: relative;
+//             display: flex;
+//             width: 100%;
+//             height: 100%;
 //             transition: width var(--animation-speed), height var(--animation-speed);
 
-//             .recipientsView {
-//                 width: 100%;
-//                 height: 100%;
+//             .remote_container {
+//                 .recipientsView {
+//                     width: 100%;
+//                     height: 100%;
+//                 }
+
+//                 .recipientsView_controls {
+//                     @include position(absolute, $bottom: var(--md-p), $right: 50%);
+//                     transform: translateX(50%);
+//                     display: flex;
+//                     gap: var(--sm-p);
+
+//                     button {
+//                         border: 1px solid var(--border-color);
+//                     }
+
+//                     .hangup_call {
+//                         background-color: red;
+//                         padding: 0 var(--xl-p);
+//                     }
+//                 }
 //             }
 
-//             .sendersView {
+
+//             .local_container {
 //                 width: 250px;
 //                 aspect-ratio: 16/9;
 //                 border-radius: var(--border-radius-light);
 //                 @include position(absolute, $top: 0, $right: 0);
 //                 border: 1px solid var(--border-color);
+
+//                 video {
+//                     width: 100%;
+//                     height: 100%;
+//                     object-fit: cover;
+//                     display: block;
+//                     border-radius: var(--border-radius-light);
+//                 }
 //             }
+//         }
+
+//         .video_container_group {
+//             .remote_container {
+//                 display: grid;
+//                 grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+//                 gap: var(--md-p);
+//                 padding: var(--md-p);
+
+//                 .video_body {
+//                     display: flex;
+//                     flex-direction: column;
+//                     gap: var(--sm-p);
+
+//                     video {
+//                         width: 100%;
+//                         height: 100%;
+//                         object-fit: cover;
+//                         display: block;
+//                         border: 1px solid var(--border-color);
+//                         border-radius: var(--border-radius-light);
+//                         aspect-ratio: 9/16;
+//                     }
+
+//                     h4 {
+//                         text-align: center;
+//                     }
+//                 }
+//             }
+
 //         }
 
 //         .video_call_container {
 //             display: none;
 //         }
 //     }
+
+//     @media only screen and (max-width: 768px) {
+//         &[data-mode="dialMode"] {
+//             width: 100dvw;
+//             height: 100dvh;
+//         }
+
+//         &[data-mode="videoMode"] {
+//             width: 100dvw;
+//             height: 100dvh;
+//         }
+//     }
+
+//     @media only screen and (min-width: 768px) {
+//         & {
+//             border: 1px solid var(--border-color);
+//             border-radius: var(--border-radius-light);
+//         }
+
+//         &[data-mode="dialMode"] {
+//             width: 300px;
+//             height: calc(300px * 16 / 9); // Maintain aspect ratio
+//         }
+
+//         &[data-mode="videoMode"] {
+//             width: 640px;
+//             height: 360px;
+//         }
+//     }
 // }
-
-.video_call {
-    @include posCenter(fixed);
-    background-color: var(--background-color);
-    transition: width var(--animation-speed), height var(--animation-speed), opacity var(--animation-speed);
-    user-select: none;
-
-    &[data-mode="dialMode"] {
-        // width: 300px;
-        // height: calc(300px * 16 / 9); // Maintain aspect ratio
-        opacity: 1;
-
-        .video_call_container {
-            @include Dflex(center);
-            width: 100%;
-            height: 100%;
-            transition: width var(--animation-speed), height var(--animation-speed);
-
-            .container_wrapper {
-                flex: 1;
-
-                .profile_avatar {
-                    @include Dflex(center);
-
-                    .avatar_wrapper {
-                        width: 128px;
-                        height: 128px;
-
-                        img {
-                            border-radius: 50%;
-                            outline: 5px solid var(--background-color-secondary);
-                        }
-                    }
-                }
-
-                .profile_name {
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    gap: var(--sm-p);
-                    margin-top: var(--sm-p);
-
-                    p {
-                        display: flex;
-                        gap: var(--sm-p);
-                    }
-                }
-
-                .buttons {
-                    margin-top: 75px;
-                    @include Dflex(space-between);
-                    padding: 0 50px;
-
-                    button {
-                        border: 1px solid var(--border-color);
-                        border-radius: 50%;
-                        background-color: var(--background-color-secondary);
-
-                        &.hangup_call_btn {
-                            width: 64px;
-                            height: 64px;
-                            background-color: red;
-                            outline: 5px solid var(--background-color-secondary);
-                        }
-
-                        &.accept_call_btn {
-                            border: 1px solid green;
-                        }
-                    }
-                }
-            }
-        }
-
-        .video_container {
-            display: none;
-        }
-    }
-
-    &[data-mode="videoMode"] {
-        opacity: 1;
-
-        .video_container {
-            display: flex;
-            width: 100%;
-            height: 100%;
-            transition: width var(--animation-speed), height var(--animation-speed);
-
-            .remote_container {
-                .recipientsView {
-                    width: 100%;
-                    height: 100%;
-                }
-
-                .recipientsView_controls {
-                    @include position(absolute, $bottom: var(--md-p), $right: 50%);
-                    transform: translateX(50%);
-                    display: flex;
-                    gap: var(--sm-p);
-
-                    button {
-                        border: 1px solid var(--border-color);
-                    }
-
-                    .hangup_call {
-                        background-color: red;
-                        padding: 0 var(--xl-p);
-                    }
-                }
-            }
-
-
-            .local_container {
-                width: 250px;
-                aspect-ratio: 16/9;
-                border-radius: var(--border-radius-light);
-                @include position(absolute, $top: 0, $right: 0);
-                border: 1px solid var(--border-color);
-
-                video {
-                    width: 100%;
-                    height: 100%;
-                    object-fit: cover;
-                    display: block;
-                    border-radius: var(--border-radius-light);
-                }
-            }
-        }
-
-        .video_container_group {
-            .remote_container {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-                gap: var(--md-p);
-                padding: var(--md-p);
-
-                .video_body {
-                    display: flex;
-                    flex-direction: column;
-                    gap: var(--sm-p);
-
-                    video {
-                        width: 100%;
-                        height: 100%;
-                        object-fit: cover;
-                        display: block;
-                        border: 1px solid var(--border-color);
-                        border-radius: var(--border-radius-light);
-                        aspect-ratio: 9/16;
-                    }
-
-                    h4 {
-                        text-align: center;
-                    }
-                }
-            }
-
-        }
-
-        .video_call_container {
-            display: none;
-        }
-    }
-
-    @media only screen and (max-width: 768px) {
-        &[data-mode="dialMode"] {
-            width: 100dvw;
-            height: 100dvh;
-        }
-
-        &[data-mode="videoMode"] {
-            width: 100dvw;
-            height: 100dvh;
-        }
-    }
-
-    @media only screen and (min-width: 768px) {
-        & {
-            border: 1px solid var(--border-color);
-            border-radius: var(--border-radius-light);
-        }
-
-        &[data-mode="dialMode"] {
-            width: 300px;
-            height: calc(300px * 16 / 9); // Maintain aspect ratio
-        }
-
-        &[data-mode="videoMode"] {
-            width: 640px;
-            height: 360px;
-        }
-    }
-}
 
 .profile_image {
     position: relative;

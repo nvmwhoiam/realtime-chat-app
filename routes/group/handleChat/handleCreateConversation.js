@@ -1,8 +1,9 @@
 // handleCreateConversation.js
 
+//Models
 import profileModel from '../../../models/profileSchema.js'; // Import your profileModel 
-import groupConversationModel from '../../../models/groupConversationSchema.js'; // Import your privateConversationModel 
-import groupConversationRequestModel from '../../../models/groupConversationRequestSchema.js'; // Import your conversationRequestModel 
+import groupConversationModel from '../../../models/group/groupConversationSchema.js'; // Import your privateConversationModel 
+import groupConversationRequestModel from '../../../models/group/groupConversationRequestSchema.js'; // Import your conversationRequestModel 
 
 import findSocketIDByprofileName from '../../../utils/findSocketIDByprofileName.js';
 import findProfileIDByProfileName from '../../../utils/findProfileIDByProfileName.js';
@@ -44,6 +45,7 @@ const handleCreateConversation = async (io, socket) => {
             const { groupName, groupDescription } = invitedData;
 
             const newGroupConversationSchema = new groupConversationModel({
+                admin: senderID,
                 createdBy: senderID,
                 groupName,
                 // groupAvatar: ,

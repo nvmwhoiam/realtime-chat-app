@@ -1,5 +1,5 @@
 import profileModel from '../models/profileSchema.js';
-import privateConversationModel from '../models/privateConversationSchema.js';
+import privateConversationModel from '../models/private/privateConversationSchema.js';
 import userIDToSocketID from '../maps/userIDToSocketID.js';
 
 // Get socket id via profile name that is not the sender

@@ -1,7 +1,6 @@
 import {
     insertSenderLogic,
     insertRecipientLogic,
-    handleReadMessages,
     hourMinuteDateFormat,
     formattedMessage
 } from "../functions.js";
@@ -10,24 +9,33 @@ import {
 const conversationList = document.querySelector('[data-list="conversations"]');
 
 // Chat container elements
-const chatContainer = document.querySelector(".chats_container");
+const chatContainer = document.querySelector(".chats_wrapper");
 
 export function sendMessageGroup(messageData, currentProfile, isNew = false) {
     const isRead = messageData.readBy.profileName === currentProfile ? 'read' : 'sent';
 
     const chatMessageHTML = `
-    <li class="sender" data-message_status="${isRead}" data-message_id="${messageData.messageID}">
-        <div class="message_content">
-            <div class="message_body">
-                <p class="message_text">${formattedMessage(messageData.content)}</p>
+        <li class="sender" data-message_status="${isRead}" data-message_id="${messageData.messageID}">
+
+            <div class="message_wrapper">
+                <div class="message_body">
+
+                    <div class="message_content">
+                        <p class="message_text">
+                            ${formattedMessage(messageData.content)}
+                        </p>
+                    </div>
+
+                </div>
+
             </div>
 
             <div class="message_footer">
                 <time datetime="${messageData.createdAt}">${hourMinuteDateFormat(messageData.createdAt)}</time>
             </div>
-        </div>
-    </li>
-    `;
+
+        </li>
+        `;
 
     insertSenderLogic(messageData, chatMessageHTML, isNew);
 }
@@ -38,18 +46,27 @@ export function recipientMessageGroup(messageData, currentProfile, isNew = false
 
     // Create the recipient chat message HTML
     const chatMessageHTML = `
-    <li class="recipient" data-message_status="${isRead}" data-message_id="${messageData.messageID}">
-        <div class="message_content">
-            <div class="message_body">
-                <div class="username">${messageData.senderData.profileName}</div>
-                <p class="message_text">${formattedMessage(messageData.content)}</p>
+        <li class="recipient" data-message_status="${isRead}" data-message_id="${messageData.messageID}">
+
+            <div class="message_wrapper">
+                <div class="message_body">
+                    <div class="username">${messageData.senderData.profileName}</div>
+                    <div class="message_content">
+                        <p class="message_text">
+                            ${formattedMessage(messageData.content)}
+                        </p>
+                    </div>
+
+                </div>
+
             </div>
+
             <div class="message_footer">
-              <time datetime="${messageData.createdAt}">${hourMinuteDateFormat(messageData.createdAt)}</time>
+                <time datetime="${messageData.createdAt}">${hourMinuteDateFormat(messageData.createdAt)}</time>
             </div>
-        </div>
-    </li>
-    `;
+
+        </li>
+        `;
 
     insertRecipientLogic(messageData, chatMessageHTML, isNew);
 }
@@ -103,7 +120,6 @@ export function createUserItemGroup(userData, profileName) {
     conversationList.insertAdjacentHTML("beforeend", conversationHTML);
 }
 
-// Create a template for the chat container
 export function createChatContainerGroup(chatData) {
     const chatContainerHTML = `
         <section class="chat_container group" data-chat_id="${chatData.conversationID}">
@@ -137,55 +153,61 @@ export function createChatContainerGroup(chatData) {
                     </div>
                 </header>
                 <ul class="chat_messages"></ul>
-                <form method="post" action="#" class="message_form">
+                <div class="chat_footer">
                     <button type="button" class="btn_icon">
                         <i class="icon_microphone-solid"></i>
                     </button>
-                    <input type="text" placeholder="Type something..." data-isTyping="false" name="send_message">
-                        <div class="dropdown">
-                            <button type="button" class="btn_icon icon_dropdown" data-btn="attach">
-                                <i class="icon_paperclip-solid"></i>
-                            </button>
 
-                            <ul class="icon_dropdown_menu" data-position="top_right" data-state="closed">
+                    <form method="post" action="#" class="message_form">
+                        <input type="text" placeholder="Type a message..." data-isTyping="false" name="send_message">
+                    </form>
 
-                                <li class="icon_dropdown_menu_item">
-                                    <button type="button" class="btn_btn">
-                                        Attach File
-                                    </button>
-                                </li>
+                    <div class="dropdown">
+                        <button type="button" class="btn_icon icon_dropdown" data-btn="attach">
+                            <i class="icon_paperclip-solid"></i>
+                        </button>
 
-                                <li class="icon_dropdown_menu_item">
-                                    <button type="button" class="btn_btn">
-                                        Attach Photo
-                                    </button>
-                                </li>
+                        <ul class="icon_dropdown_menu" data-position="top_right" data-state="closed">
 
-                            </ul>
-                        </div>
+                            <li class="icon_dropdown_menu_item">
+                                <button type="button" class="btn_btn">
+                                    Attach File
+                                </button>
+                            </li>
 
-                        <div class="dropdown">
-                            <button type="button" class="btn_icon icon_dropdown" data-btn="emojis">
-                                <i class="icon_face-smile-regular"></i>
-                            </button>
+                            <li class="icon_dropdown_menu_item">
+                                <label type="button" class="label_btn">
+                                    Attach Photo
+                                    <input type="file" data-upload="images" accept="image/*" multiple="">
+                                </label>
+                            </li>
 
-                            <ul class="icon_dropdown_menu" data-position="top_right" data-state="closed">
+                        </ul>
+                    </div>
 
-                                <li class="icon_dropdown_menu_item">
-                                    <button type="button" class="btn_btn">
-                                        Attach File
-                                    </button>
-                                </li>
+                    <div class="dropdown">
+                        <button type="button" class="btn_icon icon_dropdown" data-btn="emojis">
+                            <i class="icon_face-smile-regular"></i>
+                        </button>
 
-                                <li class="icon_dropdown_menu_item">
-                                    <button type="button" class="btn_btn">
-                                        Attach Photo
-                                    </button>
-                                </li>
+                        <ul class="icon_dropdown_menu" data-position="top_right" data-state="closed">
 
-                            </ul>
-                        </div>
-                </form>
+                            <li class="icon_dropdown_menu_item">
+                                <button type="button" class="btn_btn">
+                                    Attach File
+                                </button>
+                            </li>
+
+                            <li class="icon_dropdown_menu_item">
+                                <button type="button" class="btn_btn">
+                                    Attach Photo
+                                </button>
+                            </li>
+
+                        </ul>
+                    </div>
+
+                </div>
 
             </section>
 
@@ -323,7 +345,7 @@ export function createChatContainerGroup(chatData) {
                                             </div>
                                         </li>
                                         `).join('')}
-                    
+
                             </ul>
 
                         </div>

@@ -6,61 +6,101 @@ import {
     messageStatusFunction
 } from "../functions.js";
 
-import selectors from '../utils/selectors.js';
+const conversationList = document.querySelector('[data-list="conversations"]');
+const chatsContainer = document.querySelector('.chats_wrapper');
 
 export function sendMessage(messageData, isNew = false) {
-    const chatMessageHTML = `
-    <li class="sender" data-message_status="${messageData.status}" data-message_id="${messageData.messageID}">
-        <div class="message_content">
-            <div class="message_body">
-                <p class="message_text">${formattedMessage(messageData.content)}</p>
-            </div>
-            
-            <div class="message_footer">
-                <time datetime="${messageData.createdAt}">${hourMinuteDateFormat(messageData.createdAt)}</time>
-               <span class="status">
-                   <i class="icon_check-solid"></i>
-                   <i class="icon_check-solid"></i>
-              </span>
-            </div>
-        </div>
-    </li>
-       `;
+    const { status, messageID, content, createdAt } = messageData;
 
+    const replyDiv = messageData.replyTo ? `
+        <button class="message_replied"
+            data-target="${messageData.replyTo.messageID}"
+            title="View the original message">
+            <p class="reply_text">${formattedMessage(messageData.replyTo.content)}</p>
+        </button>
+        `: '';
+
+    const chatMessageHTML = `
+        <li class="sender" data-message_status="${status}" data-message_id="${messageID}">
+
+            <div class="message_wrapper">
+                <div class="message_body">
+
+                    <div class="message_content">
+
+                    ${replyDiv}  
+                    
+                        <p class="message_text">
+                            ${formattedMessage(content)}
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="message_footer">
+                <time datetime="${createdAt}">${hourMinuteDateFormat(createdAt)}</time>
+                <span class="status">
+                    <i class="icon_check-solid"></i>
+                    <i class="icon_check-solid"></i>
+                </span>
+            </div>
+
+        </li>
+        `;
     insertSenderLogic(messageData, chatMessageHTML, isNew);
 }
 
 export function recipientMessage(messageData, isNew = false) {
-    // Create the recipient chat message HTML
+    const { status, messageID, content, createdAt } = messageData;
+
+    const replyDiv = messageData.replyTo ? `
+        <button class="message_replied"
+            data-target="${messageData.replyTo.messageID}"
+            title="View the original message">
+            <p class="reply_text">${formattedMessage(messageData.replyTo.content)}</p>
+        </button>
+        `: '';
+
     const chatMessageHTML = `
-        <li class="recipient" data-message_status="${messageData.status}" data-message_id="${messageData.messageID}">
-            <div class="message_content">
+        <li class="recipient" data-message_status="${status}" data-message_id="${messageID}">
+
+            <div class="message_wrapper">
                 <div class="message_body">
-                    <p class="message_text">${formattedMessage(messageData.content)}</p>
+
+                    <div class="message_content">
+
+                     ${replyDiv}  
+
+                        <p class="message_text">
+                            ${formattedMessage(content)}
+                        </p>
+                    </div>
+
                 </div>
 
-                <div class="message_footer">
-                    <span class="status">
-                        <i class="icon_check-solid"></i>
-                        <i class="icon_check-solid"></i>
-                    </span>
-                    <time datetime="${messageData.createdAt}">${hourMinuteDateFormat(messageData.createdAt)}</time>
-                </div>
             </div>
+
+            <div class="message_footer">
+                <span class="status">
+                    <i class="icon_check-solid"></i>
+                    <i class="icon_check-solid"></i>
+                </span>
+                <time datetime="${createdAt}">${hourMinuteDateFormat(createdAt)}</time>
+            </div>
+
         </li>
-        `;
+       `;
 
     insertRecipientLogic(messageData, chatMessageHTML, isNew);
 }
 
-// Create a template for the user item
 export function createUserItem(userData, chatData) {
     const hasLastMessage = chatData.lastMessageData !== false;
     const lastMessageContent = hasLastMessage ? chatData.lastMessageData.content : "No messages";
     const createdAt = hasLastMessage ? chatData.lastMessageData.createdAt : '';
     const formattedDate = hasLastMessage ? hourMinuteDateFormat(chatData.lastMessageData.createdAt) : '';
-    const senderName = hasLastMessage && userData.profileName === chatData?.lastMessageData?.senderData?.profileName
-        ? 'You:' : hasLastMessage ? `${chatData?.lastMessageData?.senderData?.profileName ?? ''}:` : '';
     const messageStatus = hasLastMessage ? messageStatusFunction(chatData.lastMessageData.status) : '';
 
     const conversationHTML = `
@@ -82,7 +122,7 @@ export function createUserItem(userData, chatData) {
                     <div class="message_body" data-isTyping='false'>
 
                         <p class="message_text">
-                            ${senderName} ${lastMessageContent}
+                           ${lastMessageContent}
                         </p>
                     </div>
 
@@ -104,10 +144,9 @@ export function createUserItem(userData, chatData) {
         </li>
         `;
 
-    selectors.conversationList.insertAdjacentHTML("beforeend", conversationHTML);
+    conversationList.insertAdjacentHTML("beforeend", conversationHTML);
 }
 
-// Create a template for the chat container
 export function createChatContainer(userData, chatData) {
     const chatContainerHTML = `
         <section class="chat_container" data-chat_id="${chatData.conversationID}">
@@ -140,56 +179,61 @@ export function createChatContainer(userData, chatData) {
                     </div>
                 </header>
                 <ul class="chat_messages"></ul>
-                <form method="post" action="#" class="message_form">
+                <div class="chat_footer">
                     <button type="button" class="btn_icon">
                         <i class="icon_microphone-solid"></i>
                     </button>
-                    <input type="text" placeholder="Type something..." rows="1" data-isTyping="false" name="send_message">
-                        <div class="dropdown">
-                            <button type="button" class="btn_icon icon_dropdown" data-btn="attach">
-                                <i class="icon_paperclip-solid"></i>
-                            </button>
 
-                            <ul class="icon_dropdown_menu" data-position="top_right" data-state="closed">
+                    <form method="post" action="#" class="message_form">
+                        <input type="text" placeholder="Type a message..." data-isTyping="false" name="send_message">
+                    </form>
 
-                                <li class="icon_dropdown_menu_item">
-                                    <button type="button" class="btn_btn">
-                                        Attach File
-                                    </button>
-                                </li>
+                    <div class="dropdown">
+                        <button type="button" class="btn_icon icon_dropdown" data-btn="attach">
+                            <i class="icon_paperclip-solid"></i>
+                        </button>
 
-                                <li class="icon_dropdown_menu_item">
-                                    <label type="button" class="label_btn">
-                                        Attach Photo
-                                        <input type="file" data-upload="images" accept="image/*" multiple />
-                                    </label>
-                                </li>
+                        <ul class="icon_dropdown_menu" data-position="top_right" data-state="closed">
 
-                            </ul>
-                        </div>
+                            <li class="icon_dropdown_menu_item">
+                                <button type="button" class="btn_btn">
+                                    Attach File
+                                </button>
+                            </li>
 
-                        <div class="dropdown">
-                            <button type="button" class="btn_icon icon_dropdown" data-btn="emojis">
-                                <i class="icon_face-smile-regular"></i>
-                            </button>
+                            <li class="icon_dropdown_menu_item">
+                                <label type="button" class="label_btn">
+                                    Attach Photo
+                                    <input type="file" data-upload="images" accept="image/*" multiple="">
+                                </label>
+                            </li>
 
-                            <ul class="icon_dropdown_menu" data-position="top_right" data-state="closed">
+                        </ul>
+                    </div>
 
-                                <li class="icon_dropdown_menu_item">
-                                    <button type="button" class="btn_btn">
-                                        Attach File
-                                    </button>
-                                </li>
+                    <div class="dropdown">
+                        <button type="button" class="btn_icon icon_dropdown" data-btn="emojis">
+                            <i class="icon_face-smile-regular"></i>
+                        </button>
 
-                                <li class="icon_dropdown_menu_item">
-                                    <button type="button" class="btn_btn">
-                                        Attach Photo
-                                    </button>
-                                </li>
+                        <ul class="icon_dropdown_menu" data-position="top_right" data-state="closed">
 
-                            </ul>
-                        </div>
-                </form>
+                            <li class="icon_dropdown_menu_item">
+                                <button type="button" class="btn_btn">
+                                    Attach File
+                                </button>
+                            </li>
+
+                            <li class="icon_dropdown_menu_item">
+                                <button type="button" class="btn_btn">
+                                    Attach Photo
+                                </button>
+                            </li>
+
+                        </ul>
+                    </div>
+
+                </div>
             </section>
 
             <aside class="chat_side_panel" data-modal_container="side_panel_modal" data-state="closed">
@@ -469,27 +513,35 @@ export function createChatContainer(userData, chatData) {
         </section>
         `;
 
-    selectors.chatsContainer.insertAdjacentHTML("beforeend", chatContainerHTML);
+    chatsContainer.insertAdjacentHTML("beforeend", chatContainerHTML);
 }
 
 export function ifActiveSetMessageStatusDelivered(messageID, conversationID) {
     const chatContainer = document.querySelector(`[data-chat_id='${conversationID}']`);
+    // const conversationButton = document.querySelector(`[data-conversation_id='${conversationID}']`);
     const isActive = chatContainer.classList.contains('active');
 
     if (isActive) {
         const messageSelector = document.querySelector(`[data-message_id='${messageID}']`);
         messageSelector.setAttribute('data-message_status', 'delivered');
+
+        // const messageStatus = conversationButton.querySelector('.status_container .status');
+        // messageStatus.setAttribute('data-message_status', 'delivered');
     }
 }
 
 export function ifActiveSetMessageStatusRead(conversationID, messageID) {
     const chatContainer = document.querySelector(`[data-chat_id="${conversationID}"]`);
+    // const conversationButton = document.querySelector(`[data-conversation_id='${conversationID}']`);
     const isActive = chatContainer.classList.contains('active');
 
     if (isActive) {
         const recipientMessages = document.querySelector(`.sender[data-message_id="${messageID}"]`);
         if (recipientMessages) {
             recipientMessages.setAttribute('data-message_status', 'read');
+
+            // const messageStatus = conversationButton.querySelector('.status_container .status');
+            // messageStatus.setAttribute('data-message_status', 'read');
         }
     }
 }
