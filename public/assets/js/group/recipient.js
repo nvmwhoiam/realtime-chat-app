@@ -10,9 +10,8 @@ import {
 const recipient = (socket) => {
 
     // Recipient message sent from the server
-    socket.on("newMessageGroup", (savedMessage, currentUser) => {
-        // Display received message
-        recipientMessageGroup(savedMessage, currentUser, true);
+    socket.on("newMessageGroup", (savedMessage, profileID) => {
+        recipientMessageGroup(savedMessage, profileID, true);
 
         observeMessages(socket);
         handleUnreadMessages();

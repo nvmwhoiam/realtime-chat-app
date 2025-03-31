@@ -21,11 +21,11 @@ export default function handleTypingStartPrivate(selector, conversationID) {
 
 // Function to handle private typing logic
 function handleTypingPrivate(conversationID, isStart = true) {
-    const chatContainer = document.querySelector(`[data-chat_id="${conversationID}"]`);
+    const chatContainerItem = document.querySelector(`[data-chat_id="${conversationID}"]`);
     const conversationItem = document.querySelector(`[data-conversation_id="${conversationID}"]`);
-    const isActive = chatContainer.classList.contains('active');
+    const isActive = chatContainerItem.classList.contains('active');
     const messageBody = conversationItem.querySelector('.message_body');
-    const chatMessages = chatContainer.querySelector('.chat_messages');
+    const chatMessages = chatContainerItem.querySelector('.chat_messages');
 
     if (isStart) {
         handleTypingStart(isActive, messageBody, chatMessages);
@@ -82,9 +82,6 @@ function typingIndicatorPrivate(chatMessages) {
        ` ;
 
     chatMessages.insertAdjacentHTML("beforeend", typingHTML);
-
-    // // Scroll to the bottom of the chat container
-    // chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
 // Function to remove typing indicator on a chat body

@@ -1,6 +1,5 @@
 import setupSender from './sender.js';
 import setupRecipient from './recipient.js';
-import handleConversations from "./handleConversations.js";
 
 import {
     observeMessages,
@@ -13,43 +12,38 @@ import {
     recipientMessageGroup,
 } from './functions.js';
 
+import {
+    chatLoaderRemove
+} from '../functions.js'
+
 "use strict"
 
 const groupConversationHandle = (socket) => {
 
-    // Set up setupSender functionality
     setupSender(socket);
-
-    // Set up setupReceiver functionality
     setupRecipient(socket);
 
-    // Set up handleConversations functionality
-    handleConversations(socket);
+    socket.on("fetchChatDataGroup", (groupMessages, profileID) => {
+        resetDisplayedDividers();
 
-    // Fetch group chat data
-    socket.on("fetchChatDataGroup", (messages, currentUser) => {
-        resetDisplayedDividers(); // Reset displayed dividers
-
-        for (const messageData of messages) {
-            const isSender = messageData.senderData.profileName === currentUser;
-
+        for (const messageData of groupMessages) {
+            const isSender = messageData.senderData.profileID === profileID;
             if (isSender) {
-                // Display sent message
-                sendMessageGroup(messageData, currentUser);
+                sendMessageGroup(messageData, profileID);
             } else {
-                // Display received message
-                recipientMessageGroup(messageData, currentUser);
+                recipientMessageGroup(messageData, profileID);
             }
         }
+
+        chatLoaderRemove();
 
         handleUnreadMessages();
         observeMessages(socket);
     });
 
-    // Reads the group chat messages and send it to the participants
-    socket.on('readByGroupStatus', (conversationID, messageID, profileData) => {
+    socket.on('readByGroupStatus', (conversationID, messageID, profileID) => {
         // handleMessageStatus(conversationID, messageID);
-        console.log(messageID, conversationID, profileData);
+        console.log(conversationID, messageID, profileID);
     });
 };
 

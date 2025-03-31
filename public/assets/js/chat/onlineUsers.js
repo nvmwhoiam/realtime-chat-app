@@ -1,36 +1,44 @@
 import socket from '../socket/socketManager.js';
 
+const onlineProfilesSet = new Set();
+
 export function handleOnlineUsers() {
     socket.on('onlineProfile', (onlineProfile) => {
-        // console.log('Profile is online:', onlineProfile);
-        handleOnlineUsersUI(onlineProfile);
+        updateOnlineProfilesSet(onlineProfile, true);
     });
 
     socket.on('onlineProfileList', (onlineProfiles) => {
-        // console.log('Received online profiles:', onlineProfiles);
         for (const onlineProfile of onlineProfiles) {
-            handleOnlineUsersUI(onlineProfile);
+            updateOnlineProfilesSet(onlineProfile, true);
+        }
+    });
+
+    socket.on('offlineProfile', (offlineProfile) => {
+        if (offlineProfile) {
+            updateOnlineProfilesSet(offlineProfile, false);
         }
     });
 }
 
-function handleOnlineUsersUI(onlineProfile) {
-    const profileSelector = document.querySelectorAll(`[data-profile="${onlineProfile}"]`);
-
-    if (profileSelector.length > 0) {
-        profileSelector.forEach(eachProfile => {
-            eachProfile.setAttribute('data-status', 'online');
-        });
+function updateOnlineProfilesSet(profileID, isOnline) {
+    if (isOnline) {
+        if (!onlineProfilesSet.has(profileID)) {
+            onlineProfilesSet.add(profileID);
+            handleOnlineUsersUI(profileID, true);
+        }
+    } else {
+        if (onlineProfilesSet.has(profileID)) {
+            onlineProfilesSet.delete(profileID);
+            handleOnlineUsersUI(profileID, false);
+        }
     }
 }
 
-socket.on('offlineProfile', (offlineProfile) => {
-    console.log('Profile is offline:', offlineProfile);
-    if (offlineProfile) {
-        const profileSelector = document.querySelectorAll(`[data-profile="${offlineProfile}"]`);
-
+function handleOnlineUsersUI(profileID, isOnline) {
+    const profileSelector = document.querySelectorAll(`[data-profile_id="${profileID}"]`);
+    if (profileSelector.length > 0) {
         profileSelector.forEach(eachProfile => {
-            eachProfile.setAttribute('data-status', 'offline');
+            eachProfile.setAttribute('data-status', isOnline ? 'online' : 'offline');
         });
     }
-});
+}

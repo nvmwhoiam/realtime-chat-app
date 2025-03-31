@@ -1,6 +1,5 @@
 import setupSender from './sender.js';
 import setupRecipient from './recipient.js';
-import handleConversations from "./components/chat/handleConversations.js";
 
 import {
     observeMessages,
@@ -12,8 +11,12 @@ import {
     sendMessage,
     recipientMessage,
     ifActiveSetMessageStatusDelivered,
-    ifActiveSetMessageStatusRead,
+    ifActiveSetMessageStatusRead
 } from './functions.js';
+
+import {
+    chatLoaderRemove
+} from '../functions.js'
 
 "use strict"
 
@@ -23,20 +26,21 @@ const privateConversationHandle = (socket) => {
 
     setupRecipient(socket);
 
-    handleConversations(socket);
+    socket.on("privateMessagesFetchFeedback", (messagesData, profileID) => {
+        // resetDisplayedDividers();
 
-    socket.on("fetchChatData", (messages, currentUser) => {
-        resetDisplayedDividers();
-
-        for (const messageData of messages) {
-            const isSender = messageData.senderData.profileName === currentUser;
-
+        // console.time('fetchMessage');
+        for (const messageData of messagesData) {
+            const isSender = messageData.senderData.profileID === profileID;
             if (isSender) {
                 sendMessage(messageData);
             } else {
                 recipientMessage(messageData);
             }
         }
+        // console.timeEnd('fetchMessage');
+
+        chatLoaderRemove();
 
         handleUnreadMessages();
         observeMessages(socket);
@@ -46,11 +50,11 @@ const privateConversationHandle = (socket) => {
         ifActiveSetMessageStatusRead(conversationID, messageID);
     });
 
-    socket.on('messageDeliveredFeedbackAfterRelogin', (messageData) => {
-        for (const messageDatas of messageData) {
-            const { messageID, conversationID } = messageDatas;
-
-            ifActiveSetMessageStatusDelivered(messageID, conversationID);
+    socket.on('messageDeliveredFeedbackAfterRelogin', (messagesData) => {
+        for (const messageData of messagesData) {
+            const { conversationID, messageID } = messageData;
+            console.log(messageData);
+            ifActiveSetMessageStatusDelivered(conversationID, messageID);
         }
     });
 };

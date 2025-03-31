@@ -13,8 +13,8 @@ const sender = (socket) => {
     });
 
     // Get message feedback to the sender that user is online and message delivered
-    socket.on('messageDeliveredFeedback', (messageID, conversationID) => {
-        ifActiveSetMessageStatusDelivered(messageID, conversationID);
+    socket.on('messageDeliveredFeedback', (conversationID, messageID) => {
+        ifActiveSetMessageStatusDelivered(conversationID, messageID);
     });
 };
 

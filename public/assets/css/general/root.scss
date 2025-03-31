@@ -1,0 +1,110 @@
+// 070624 
+
+:root {
+
+    /* Brand Colors */
+    // --primary-color: #007BFF;
+    // --secondary-color: #6C757D;
+
+    --accent-color: hsl(270, 50%, 40%);
+    --accent-color-hover: hsl(270, 50%, 30%);
+
+    --text-color-secondary: hsl(0, 0%, 70%);
+
+    --border-color: hsla(0, 0%, 100%, 0.1);
+
+    --green-color: hsl(126, 69%, 25%);
+    --red-color: hsl(354, 70%, 25%);
+
+    /* Default low opacity colours */
+    --low-opacity: rgba(0, 0, 0, 0.1);
+    --low-opacity-hover: rgba(0, 0, 0, 0.2);
+
+    /* Default padding for various elements */
+    --xs-p: 4px;
+    --sm-p: 8px;
+    --md-p: 16px;
+    --lg-p: 24px;
+    --xl-p: 32px;
+    --xxl-p: 40px;
+
+    /* Default animation speed*/
+    --animation-speed: 400ms ease;
+
+    /* Default border radius sizes for various elements */
+    --border-radius-light: 0.75rem;
+
+    /* Default font sizes for various text elements */
+    --font-size-small: 0.75rem; // 12px
+    --font-size-base: 0.875rem; // 14px
+    --font-size-medium: 1rem; // 16px
+    --font-size-large: 1.125rem; // 18px
+    --font-size-xlarge: 1.25rem; // 20px
+    --font-size-xxlarge: 1.5rem; // 24px
+    --font-size-xxlarge: 1.625rem; // 26px
+    --font-size-xxlarge: 1.75rem; // 28px
+    --font-size-xxlarge: 1.875rem; // 30px
+    --font-size-xxxlarge: 2rem; // 32px
+    --font-size-xxxxlarge: 2.25rem; // 36px
+    --font-size-xxxxxlarge: 3rem; // 48px
+    --font-size-xxxxxxlarge: 4rem; // 64px
+    --font-size-xxxxxxxlarge: 4.5rem; // 72px
+
+    /* Default line heights */
+    --line-height-sm: 1.2;
+    --line-height-base: 1.5;
+    --line-height-lg: 1.8;
+
+    /* Spacing */
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+}
+
+:root:has(body.dark) {
+    color-scheme: dark;
+    /* Default background colours for dark mode */
+    // --background-color: hsl(198, 31%, 6%);
+    // --background-color-secondary: hsl(198, 31%, 7%);
+    --background-color: hsl(218, 21%, 15%);
+    --background-color-secondary: hsl(218, 21%, 20%);
+    --background-color-secondary-hover: hsl(209, 94%, 10%);
+    --text-color: hsl(0, 0%, 90%);
+    --link-color: hsl(214, 93%, 62%);
+}
+
+:root:has(body.light) {
+    color-scheme: light;
+    /* Default background colours for light mode */
+    --background-color: hsl(198, 20%, 17%);
+    --background-color-secondary: hsl(200, 21%, 27%);
+    --text-color: hsl(0, 30%, 92%);
+    --link-color: hsl(211, 100%, 50%);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        color-scheme: dark;
+        /* Default background colours for dark mode */
+        // --background-color: hsl(198, 31%, 6%);
+        // --background-color-secondary: hsl(198, 31%, 7%);
+        --background-color: hsl(218, 21%, 15%);
+        --background-color-secondary: hsl(218, 21%, 20%);
+        --background-color-secondary-hover: hsl(209, 94%, 10%);
+        --text-color: hsl(0, 0%, 90%);
+        --link-color: hsl(214, 93%, 62%);
+    }
+}
+
+@media (prefers-color-scheme: light) {
+    :root {
+        color-scheme: light;
+        /* Default background colours for light mode */
+        --background-color: hsl(198, 20%, 17%);
+        --background-color-secondary: hsl(200, 21%, 27%);
+        --text-color: hsl(0, 30%, 92%);
+        --link-color: hsl(211, 100%, 50%);
+    }
+}

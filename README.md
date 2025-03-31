@@ -64,8 +64,15 @@ Open public/js/socket/socketManager.js and add the following code:
 
 ```js
 // Replace 'YourIP' with your WebSocket server's IP address or domain
-const socket = io("ws://YourIP", {
+const urlParams = new URLSearchParams(window.location.search);
+const sID = urlParams.get("sID");
+
+const socket = io("ws://YourIP:Port", {
+  // e.g 192.168.0.1:3000
   withCredentials: true, // Important! This enables sending cookies
+  auth: {
+    sID,
+  },
 });
 
 // Export the socket instance for use in other parts of your application
@@ -80,9 +87,20 @@ Start your Node.js server with:
 npm run devStart
 ```
 
-### 7. Access Your Application
+### 7. Create new profile
 
-Open your browser and go to http://127.0.0.1:5500/public/index.html?sessionID=yourUsername to see your real-time chat application in action.
+```js
+// Uncomment this in /server/routes/main.js to create new profiles
+const createProfile = new profileModel({
+  profileName: "yourUsername", // Change yourUsername with your
+});
+
+createProfile.save();
+```
+
+### 8. Access Your Application
+
+Open your VSCode Live Server and go to http://127.0.0.1:5500/public/index.html?sID=yourUsername to see your real-time chat application in action.
 
 # MongoDB Setup
 
@@ -96,17 +114,41 @@ MONGO_URI = mongodb+srv://username:password@cluster.mongodb.net/chats?retryWrite
 
 Replace `username`, `password`, `cluster`, and `chats` with your actual MongoDB credentials and database name.
 
-## User Profiles
+## Core Features
 
-To use the chat application, users need to create a profile. This is done by entering a username and clicking the "Create Profile" button. This will save the profile with the username to the MongoDB database.
+### 1-to-1 Chat
 
-#### URL Parameters
+- **Real-time messaging**: Encrypted text-based communication.
+  - _Encryption_: Currently uses basic key-based encryption (per conversation).
+- **Typing indicator**: Shows when the other user is typing.
+- **Message status**:  
+  ✓ Sent → ✓ Delivered → ✓✓ Read.
+- **Presence**: Online/offline indicators.
+- **Unread counter**: Tracks pending messages.
+- **Emoji drawer**: Quick access to reactions.
+- **Coming soon**:
+  - Fully functional video/voice calls.
 
-```text
-http://127.0.0.1:5500/public/index.html?sessionID=username
-```
+### Group Chat
 
-This allows the application to use the username for the current session.
+- **Creation & invites**:
+  - Create groups and send invites.
+  - Join requests (accept/decline).
+- **Real-time features**:
+  - Group typing indicators.
+  - Unread message counters.
+  - Shared emoji reactions.
+- **Admin controls**: Manage members and permissions.
+
+### Media Sharing
+
+- Support for:
+  - Images.
+
+### Security
+
+- **Current**: Messages encrypted with conversation-specific keys.
+- **Planned**: End-to-end encryption (E2EE) upgrade.
 
 ## Troubleshooting
 

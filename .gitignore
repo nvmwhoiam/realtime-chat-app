@@ -2,3 +2,5 @@
 node_modules/
 public/assets/js/socket/socketManager.js
 todo.txt
+test.html
+.gitignore
